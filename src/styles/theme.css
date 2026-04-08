@@ -1,0 +1,17 @@
+:root {
+  --text: hsl(240, 100%, 95%);
+  --background: hsl(245, 30%, 15%);
+  --secondary: hsl(215, 15%, 50%);
+  --primary: hsl(240, 55%, 55%);
+  --accent: hsl(250, 30%, 75%);
+
+  --mantine-color-body: var(--background);
+  --mantine-color-text: var(--text);
+  --mantine-primary-color-filled: var(--primary);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+}

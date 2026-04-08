@@ -1,0 +1,10 @@
+.toggle-root {
+  background-color: var(--secondary) !important;
+  border-radius: var(--mantine-radius-lg);
+  padding: 4px;
+}
+
+.toggle-indicator {
+  background-color: var(--primary) !important;
+  border-radius: var(--mantine-radius-lg);
+}
