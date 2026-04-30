@@ -4,7 +4,7 @@ import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { FLAGS, generateRandomMazeDFS } from '../utils/mazeCore';
 
-export default function Canvas({ mazeData, setMazeData, triggerRandom, activeTool }) {
+export default function Canvas({ mazeData, setMazeData, triggerRandom, activeTool, isReadOnly = false }) {
   const containerRef = useRef(null);
   const appRef = useRef(null);
   const gfxRef = useRef(null);
@@ -13,6 +13,9 @@ export default function Canvas({ mazeData, setMazeData, triggerRandom, activeToo
 
   const toolRef = useRef(activeTool);
   const stateRef = useRef({ grid: mazeData.grid, w: mazeData.w, h: mazeData.h });
+
+  const isReadOnlyRef = useRef(isReadOnly);
+  useEffect(() => { isReadOnlyRef.current = isReadOnly; }, [isReadOnly]);
 
   useEffect(() => { toolRef.current = activeTool; }, [activeTool]);
 
@@ -73,6 +76,9 @@ export default function Canvas({ mazeData, setMazeData, triggerRandom, activeToo
   }, []);
 
   const handleDraw = (e) => {
+    if (isReadOnlyRef.current) return;
+    
+    
     const { grid: currentGrid, w, h } = stateRef.current;
     if (currentGrid.length === 0) return;
 
