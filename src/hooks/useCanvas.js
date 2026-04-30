@@ -13,7 +13,7 @@ export const useCanvas = ({
   setMazeData,
   activeTool,
   generatorFn,
-  foundPath,
+  isReadOnly,
 }) => {
   // --- 1. SETUP & REFS ---
   const containerRef = useRef(null);
@@ -96,14 +96,14 @@ export const useCanvas = ({
       // 2. Render Algo if: Resizing OR Not found path yet
       const shouldRenderAlgo =
         isResize ||
-        !foundPath;
+        !isReadOnly;
 
       // 3. Render Entity if: Resizing OR Editing Entity (Person/Fire) OR Have found path
       const shouldRenderEntity =
         isResize ||
         activeTool === "person" ||
         activeTool === "fire" ||
-        foundPath;
+        isReadOnly;
 
       // --- EXECUTE RENDER ---
       if (shouldRenderBase) renderBaseLayer(bgLayer, grid, w, h);
