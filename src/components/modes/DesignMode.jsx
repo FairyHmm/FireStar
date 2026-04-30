@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { Stack, Text } from '@mantine/core';
 import Canvas from '../Canvas';
 import Toolbar from '../Toolbar';
+import { generateRandomMazeDFS } from '../../utils/mazeCore';
 
 export default function DesignMode({ mazeData, setMazeData }) {
   const [activeTool, setActiveTool] = useState('wall');
-  const [triggerRandom, setTriggerRandom] = useState(0);
 
   const handleRandomise = (w, h, algo) => {
     const validW = w % 2 === 0 ? w + 1 : w;
     const validH = h % 2 === 0 ? h + 1 : h;
-    // Chỉ set size ở đây, không gen maze
-    setMazeData(prev => ({ ...prev, w: validW, h: validH }));
-    setTriggerRandom(prev => prev + 1);
+
+    // Generate manually when button is clicked
+    const newGrid = generateRandomMazeDFS(validW, validH);
+    // Update State triggers the Canvas Re-render
+    setMazeData({ w: validW, h: validH, grid: newGrid });
   };
 
   return (
@@ -27,8 +29,8 @@ export default function DesignMode({ mazeData, setMazeData }) {
       <Canvas
         mazeData={mazeData}
         setMazeData={setMazeData}
-        triggerRandom={triggerRandom}
         activeTool={activeTool}
+        generatorFn={generateRandomMazeDFS}
       />
     </Stack>
   );

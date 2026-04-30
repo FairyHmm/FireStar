@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { generateRandomMazeDFS } from "../utils/mazeCore";
 import { initPixi } from "../pixi/app";
 import { renderGrid, syncViewport } from "../pixi/display";
 import { attachDrawListener } from "../pixi/events";
@@ -7,31 +6,33 @@ import { attachDrawListener } from "../pixi/events";
 export const useCanvas = ({
   mazeData,
   setMazeData,
-  triggerRandom,
   activeTool,
+  generatorFn,
 }) => {
+  // --- 1. SETUP & REFS ---
   const containerRef = useRef(null);
   const instancesRef = useRef(null);
 
-  // Refs to keep imperative logic synced with React props
+  // Update refs directly
   const toolRef = useRef(activeTool);
   const stateRef = useRef({
     grid: mazeData.grid,
     w: mazeData.w,
     h: mazeData.h,
+    algoData: mazeData.algoData,
+    entities: mazeData.entities,
   });
 
-  // Sync Tool Ref
-  useEffect(() => {
-    toolRef.current = activeTool;
-  }, [activeTool]);
+  toolRef.current = activeTool;
+  stateRef.current = {
+    grid: mazeData.grid,
+    w: mazeData.w,
+    h: mazeData.h,
+    algoData: mazeData.algoData,
+    entities: mazeData.entities,
+  };
 
-  // Sync State Ref
-  useEffect(() => {
-    stateRef.current = { grid: mazeData.grid, w: mazeData.w, h: mazeData.h };
-  }, [mazeData]);
-
-  // Initialization & Cleanup
+  // --- 2. INITIALIZE PIXI & ATTACH LISTENER ---
   useEffect(() => {
     let cleanupInteraction;
 
@@ -39,7 +40,14 @@ export const useCanvas = ({
       const instances = await initPixi(containerRef.current);
       instancesRef.current = instances;
 
-      // Attach drawing events
+      // Auto-generate default maze if missing
+      if (stateRef.current.grid.length === 0 && generatorFn) {
+        const { w, h } = stateRef.current;
+        const newGrid = generatorFn(w, h);
+        setMazeData({ w, h, grid: newGrid });
+      }
+
+      // Attach mouse/drawing events
       cleanupInteraction = attachDrawListener(
         instances.gfx,
         toolRef,
@@ -47,7 +55,7 @@ export const useCanvas = ({
         setMazeData,
       );
 
-      // Initial Render
+      // Initial Render if data exists
       if (stateRef.current.grid.length > 0) {
         syncViewport(
           instances.viewport,
@@ -61,22 +69,24 @@ export const useCanvas = ({
           stateRef.current.w,
           stateRef.current.h,
         );
-      } else {
-        doRandomise(stateRef.current.w, stateRef.current.h);
       }
     };
 
     init();
 
+    // Prevent memory leaks when the component unmounts
     return () => {
       if (cleanupInteraction) cleanupInteraction();
       if (instancesRef.current) instancesRef.current.destroy();
+      if (containerRef.current) containerRef.current.innerHTML = "";
     };
   }, []);
 
-  // Re-render when grid data changes
+  // --- 3. RE-RENDER ON DATA CHANGE ---
   useEffect(() => {
     if (instancesRef.current && mazeData.grid.length > 0) {
+      syncViewport(instancesRef.current.viewport, mazeData.w, mazeData.h);
+
       renderGrid(
         instancesRef.current.gfx,
         instancesRef.current.iconContainer,
@@ -85,21 +95,7 @@ export const useCanvas = ({
         mazeData.h,
       );
     }
-  }, [mazeData.grid]);
-
-  // Handle Random Generation Trigger
-  useEffect(() => {
-    if (instancesRef.current && triggerRandom > 0) {
-      doRandomise(mazeData.w, mazeData.h);
-      syncViewport(instancesRef.current.viewport, mazeData.w, mazeData.h);
-    }
-  }, [triggerRandom]);
-
-  // Helper: Generate Random Maze
-  const doRandomise = (width, height) => {
-    const newGrid = generateRandomMazeDFS(width, height);
-    setMazeData({ w: width, h: height, grid: newGrid });
-  };
+  }, [mazeData.grid, mazeData.w, mazeData.h]);
 
   return containerRef;
 };
