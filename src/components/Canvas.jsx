@@ -77,8 +77,8 @@ export default function Canvas({ mazeData, setMazeData, triggerRandom, activeToo
 
   const handleDraw = (e) => {
     if (isReadOnlyRef.current) return;
-    
-    
+    if (e.button !== 0) return;
+
     const { grid: currentGrid, w, h } = stateRef.current;
     if (currentGrid.length === 0) return;
 
@@ -167,5 +167,5 @@ export default function Canvas({ mazeData, setMazeData, triggerRandom, activeToo
     }
   }, [triggerRandom]);
 
-  return <Box ref={containerRef} style={{ display: 'flex', justifyContent: 'center', border: '1px solid #373a40', borderRadius: '8px', overflow: 'hidden' }} />;
+  return <Box onContextMenu={(e) => e.preventDefault()} ref={containerRef} style={{ display: 'flex', justifyContent: 'center', border: '1px solid #373a40', borderRadius: '8px', overflow: 'hidden' }} />;
 }

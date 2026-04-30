@@ -6,16 +6,14 @@
  * Đầu ra: Ma trận thời gian (Int32Array) ghi lại số bước lửa lan tới từng ô
  */
 
-const PERSON = 0b00000001;
-const TILE = 0b00000100;
-const FIRE_CURRENT = 0b01000000;
+import { FLAGS } from './mazeCore.js';
 
 const dr = [-1, +1, 0, 0];
 const dc = [0, 0, -1, +1];
 
 export function fireSpread_bfs(grid, rows, cols, fireStarts) {
     const size = rows * cols;
-    const fireTime = new Int32Array(size).fill(Infinity);
+    const fireTime = new Int32Array(size).fill(2e9);
     const queue = [];
     let head = 0;
     for (let i = 0; i < fireStarts.length; i++) {
@@ -33,7 +31,8 @@ export function fireSpread_bfs(grid, rows, cols, fireStarts) {
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
                 continue;
             const next = nr * cols + nc;
-            if ((grid[next] & TILE) && fireTime[next] === Infinity) {
+            const isPassableForFire = (grid[next] === FLAGS.TILE || grid[next] === FLAGS.PERSON);
+            if (isPassableForFire && fireTime[next] === Infinity) {
                 fireTime[next] = fireTime[cur] + 1;
                 queue.push(next);
             }
