@@ -1,8 +1,4 @@
-export const LAYERS = {
-  BACKGROUND: 0, // Walls, Empty Tiles
-  ALGO: 1,       // Explored, Path, Predictions
-  ENTITIES: 2,   // Person, Fire
-};
+export const tileSize = 20;
 
 export const CELL = {
   PERSON:       0b00000001,

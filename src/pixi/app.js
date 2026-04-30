@@ -21,19 +21,25 @@ export const initPixi = async (container) => {
   app.stage.addChild(viewport);
   viewport.drag({ mouseButtons: "right-middle" }).pinch().wheel().decelerate();
 
-  const gfx = new PIXI.Graphics();
-  gfx.eventMode = "static";
-  viewport.addChild(gfx);
+  // Layer 1: Background (Walls & Tiles)
+  const bgLayer = new PIXI.Graphics();
+  bgLayer.eventMode = "static"; // Catches clicks
+  viewport.addChild(bgLayer);
 
-  const iconContainer = new PIXI.Container();
-  iconContainer.eventMode = "none";
-  iconContainer.interactiveChildren = false;
-  viewport.addChild(iconContainer);
+  // Layer 2: Algorithm (Explored, Path, Predictions)
+  const algoLayer = new PIXI.Graphics();
+  algoLayer.eventMode = "none";
+  viewport.addChild(algoLayer);
+
+  // Layer 3: Entities (Person, Fire)
+  const entityLayer = new PIXI.Graphics();
+  entityLayer.eventMode = "none";
+  viewport.addChild(entityLayer);
 
   const destroy = () => {
     app.destroy(true, { children: true });
     if (container) container.innerHTML = "";
   };
 
-  return { app, viewport, gfx, iconContainer, destroy };
+  return { app, viewport, bgLayer, algoLayer, entityLayer, destroy };
 };

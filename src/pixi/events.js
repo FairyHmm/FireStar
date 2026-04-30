@@ -1,13 +1,17 @@
-import { CELL } from '../utils/constants.js';
+import { CELL, tileSize } from "../utils/constants";
 
-export const attachDrawListener = (gfx, toolRef, stateRef, setMazeData) => {
+export const attachDrawListener = (bgLayer, toolRef, stateRef, setMazeData) => {
   const handleDraw = (e) => {
+    // Only draw on left click
+    if (e.button !== 0)
+      return;
+
     const { grid: currentGrid, w, h } = stateRef.current;
     if (currentGrid.length === 0) return;
 
-    const localPos = gfx.toLocal(e.global);
-    const x = Math.floor(localPos.x / 20);
-    const y = Math.floor(localPos.y / 20);
+    const localPos = bgLayer.toLocal(e.global);
+    const x = Math.floor(localPos.x / tileSize);
+    const y = Math.floor(localPos.y / tileSize);
 
     if (x < 0 || x >= w || y < 0 || y >= h) return;
 
@@ -15,30 +19,33 @@ export const attachDrawListener = (gfx, toolRef, stateRef, setMazeData) => {
     const val = currentGrid[index];
     const currentTool = toolRef.current;
 
-    if (!currentTool || currentTool === 'none') return;
+    // Cannot place Person/Fire on top of a Wall
+    if ((currentTool === 'person' || currentTool === 'fire') && (val & CELL.WALL)) {
+      return;
+    }
 
+    // Create a copy of the grid
     const newGrid = new Uint8Array(currentGrid);
 
     if (currentTool === 'person') {
-      for (let i = 0; i < w * h; i++) {
-        if (newGrid[i] === CELL.PERSON) newGrid[i] = CELL.TILE;
-      }
-      newGrid[index] = CELL.PERSON;
-    } else if (currentTool === 'wall') {
-      newGrid[index] = CELL.WALL;
-    } else if (currentTool === 'tile') {
-      newGrid[index] = CELL.TILE;
-    } else if (currentTool === 'fire') {
-      newGrid[index] = CELL.FIRE_CURRENT;
+      for (let i = 0; i < w * h; i++)
+        if (newGrid[i] & CELL.PERSON)
+          newGrid[i] &= ~CELL.PERSON;
+      newGrid[index] |= CELL.PERSON;
     }
+    else if (currentTool === 'wall')
+      newGrid[index] = CELL.WALL;
+    else if (currentTool === 'tile')
+      newGrid[index] = CELL.TILE;
+    else if (currentTool === 'fire')
+      newGrid[index] |= CELL.FIRE_CURRENT;
 
     setMazeData((prev) => ({ ...prev, grid: newGrid }));
   };
 
-  gfx.on('pointerdown', handleDraw);
+  bgLayer.on('pointerdown', handleDraw);
 
-  // Return a cleanup function to remove the listener
   return () => {
-    gfx.off('pointerdown', handleDraw);
+    bgLayer.off('pointerdown', handleDraw);
   };
 };
