@@ -7,6 +7,10 @@
  * Đầu ra: Mảng các index 1D tạo thành đường đi hoàn chỉnh, hoặc null nếu kẹt.
  */
 
+const PERSON = 0b00000001;
+const TILE = 0b00000100;
+const FIRE_CURRENT = 0b01000000;
+
 const dr = [-1, +1, 0, 0];
 const dc = [0, 0, -1, +1];
 
@@ -34,7 +38,7 @@ export function findPath_bfs(grid, rows, cols, startIdx, fireTime) {
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
                 continue;
             const next = nr * cols + nc;
-            if (grid[next] === 1)
+            if (!(grid[next] & TILE))
                 continue;
             if (gScore[next] === Infinity && gScore[cur] + 1 < fireTime[next]) {
                 gScore[next] = gScore[cur] + 1;
