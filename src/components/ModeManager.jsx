@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { Stack, SegmentedControl, Box, Container } from "@mantine/core";
 import DesignMode from "./modes/DesignMode";
-import SimulationView from "./modes/SimulationMode";
-import classes from '../styles/components/mode-manager.module.css';
-import scClasses from '../styles/mantine/segmented-control.module.css';
+import SimulationMode from "./modes/SimulationMode";
+import classes from "../styles/components/mode-manager.module.css";
+import scClasses from "../styles/mantine/segmented-control.module.css";
 
 export default function ModeManager() {
   const [mode, setMode] = useState("design");
-  
+
   // Giữ maze ko bị mất khi chuyển chế độ
   const [mazeData, setMazeData] = useState({
     grid: new Uint8Array(0),
     w: 31,
-    h: 31
+    h: 31,
   });
 
   return (
@@ -23,21 +23,20 @@ export default function ModeManager() {
             value={mode}
             onChange={setMode}
             data={[
-              { label: 'Xây dựng', value: 'design' },
-              { label: 'Mô phỏng', value: 'simulation' },
+              { label: "Xây dựng", value: "design" },
+              { label: "Mô phỏng", value: "simulation" },
             ]}
             classNames={{
-              root: scClasses['toggle-root'],
-              indicator: scClasses['toggle-indicator']
+              root: scClasses["toggle-root"],
+              indicator: scClasses["toggle-indicator"],
             }}
           />
         </Box>
 
-        {/* Truyền mazeData và setMazeData xuống để các con dùng chung */}
-        {mode === 'design' ? (
+        {mode === "design" ? (
           <DesignMode mazeData={mazeData} setMazeData={setMazeData} />
         ) : (
-          <SimulationView mazeData={mazeData} />
+          <SimulationMode mazeData={mazeData} setMazeData={setMazeData} />
         )}
       </Stack>
     </Container>

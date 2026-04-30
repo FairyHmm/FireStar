@@ -1,10 +1,14 @@
 import { Stack, Text } from '@mantine/core';
+import Canvas from '../Canvas';
 
-export default function SimulationView() {
+export default function SimulationMode({ mazeData, setMazeData }) {
   return (
     <Stack align="center" mt="md">
-      <h1>Simulation</h1>
       <Text c="dimmed">// TODO: Bổ sung thuật toán tìm đường</Text>
+      <Canvas
+        mazeData={mazeData}
+        setMazeData={setMazeData}
+      />
     </Stack>
   );
 }

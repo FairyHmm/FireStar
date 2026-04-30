@@ -4,8 +4,8 @@ import Canvas from '../Canvas';
 import Toolbar from '../Toolbar';
 
 export default function DesignMode({ mazeData, setMazeData }) {
-  const [activeTool, setActiveTool] = useState('wall'); 
-  const [triggerRandom, setTriggerRandom] = useState(0); 
+  const [activeTool, setActiveTool] = useState('wall');
+  const [triggerRandom, setTriggerRandom] = useState(0);
 
   const handleRandomise = (w, h, algo) => {
     const validW = w % 2 === 0 ? w + 1 : w;
@@ -17,17 +17,17 @@ export default function DesignMode({ mazeData, setMazeData }) {
 
   return (
     <Stack align="center" mt="md">
-      <Toolbar 
-        onRandomise={handleRandomise} 
-        activeTool={activeTool} 
-        setActiveTool={setActiveTool} 
+      <Toolbar
+        onRandomise={handleRandomise}
+        activeTool={activeTool}
+        setActiveTool={setActiveTool}
       />
       <Text c="dimmed" size="xs">Hướng dẫn: Click chuột trái để vẽ, chuột phải để di chuyển</Text>
-      
-      <Canvas 
-        mazeData={mazeData} 
+
+      <Canvas
+        mazeData={mazeData}
         setMazeData={setMazeData}
-        triggerRandom={triggerRandom} 
+        triggerRandom={triggerRandom}
         activeTool={activeTool}
       />
     </Stack>

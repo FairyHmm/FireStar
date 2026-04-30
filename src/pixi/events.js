@@ -15,9 +15,7 @@ export const attachDrawListener = (gfx, toolRef, stateRef, setMazeData) => {
     const val = currentGrid[index];
     const currentTool = toolRef.current;
 
-    if ((currentTool === 'person' || currentTool === 'fire') && val === FLAGS.WALL) {
-      return;
-    }
+    if (!currentTool || currentTool === 'none') return;
 
     const newGrid = new Uint8Array(currentGrid);
 
