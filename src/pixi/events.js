@@ -1,4 +1,4 @@
-import { FLAGS } from '../utils/mazeCore';
+import { CELL } from '../utils/constants.js';
 
 export const attachDrawListener = (gfx, toolRef, stateRef, setMazeData) => {
   const handleDraw = (e) => {
@@ -21,15 +21,15 @@ export const attachDrawListener = (gfx, toolRef, stateRef, setMazeData) => {
 
     if (currentTool === 'person') {
       for (let i = 0; i < w * h; i++) {
-        if (newGrid[i] === FLAGS.PERSON) newGrid[i] = FLAGS.TILE;
+        if (newGrid[i] === CELL.PERSON) newGrid[i] = CELL.TILE;
       }
-      newGrid[index] = FLAGS.PERSON;
+      newGrid[index] = CELL.PERSON;
     } else if (currentTool === 'wall') {
-      newGrid[index] = FLAGS.WALL;
+      newGrid[index] = CELL.WALL;
     } else if (currentTool === 'tile') {
-      newGrid[index] = FLAGS.TILE;
+      newGrid[index] = CELL.TILE;
     } else if (currentTool === 'fire') {
-      newGrid[index] = FLAGS.FIRE_CURRENT;
+      newGrid[index] = CELL.FIRE_CURRENT;
     }
 
     setMazeData((prev) => ({ ...prev, grid: newGrid }));
