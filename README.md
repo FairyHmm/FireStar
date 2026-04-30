@@ -14,6 +14,7 @@ Build for production:
 ```bash
 pnpm run build
 ```
+
 Về git:
 - Local: Máy cá nhân
 - Remote: Server của Git -> Github/ Gitlab/ Provider khác, v.v
