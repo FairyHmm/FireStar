@@ -1,22 +1,20 @@
 /**
  * Thuật toán tìm đường sinh tồn (sử dụng BFS)
- * Đầu vào: 
+ * Đầu vào:
  * - grid: mảng bản đồ (0: Trống, 1: Tường)
  * - startIdx: Index 1D vị trí xuất phát của nhân vật
  * - fireTime: bản đồ lửa lan lấy từ hàm fireSpread_bfs
  * Đầu ra: Mảng các index 1D tạo thành đường đi hoàn chỉnh, hoặc null nếu kẹt.
  */
 
-const PERSON = 0b00000001;
-const TILE = 0b00000100;
-const FIRE_CURRENT = 0b01000000;
+import { CELL } from './constants.js';
 
 const dr = [-1, +1, 0, 0];
 const dc = [0, 0, -1, +1];
 
 export function findPath_bfs(grid, rows, cols, startIdx, fireTime) {
     const size = rows * cols;
-    const gScore = new Int32Array(size).fill(Infinity);
+    const gScore = new Int32Array(size).fill(2e9);
     const trace = new Int32Array(size).fill(-1);
     const queue = [];
     let head = 0;
@@ -38,7 +36,7 @@ export function findPath_bfs(grid, rows, cols, startIdx, fireTime) {
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
                 continue;
             const next = nr * cols + nc;
-            if (!(grid[next] & TILE))
+            if (grid[next] === CELL.WALL)
                 continue;
             if (gScore[next] === Infinity && gScore[cur] + 1 < fireTime[next]) {
                 gScore[next] = gScore[cur] + 1;

@@ -1,14 +1,12 @@
 /**
- * Thuật toán mô phỏng Lửa lan 
- * Đầu vào: 
+ * Thuật toán mô phỏng Lửa lan
+ * Đầu vào:
  * - grid: Mảng bản đồ (0: Trống, 1: Tường)
  * - fireStarts: Mảng chứa các index (1D) của các điểm bắt đầu cháy
  * Đầu ra: Ma trận thời gian (Int32Array) ghi lại số bước lửa lan tới từng ô
  */
 
-const PERSON = 0b00000001;
-const TILE = 0b00000100;
-const FIRE_CURRENT = 0b01000000;
+import { CELL } from './constants.js';
 
 const dr = [-1, +1, 0, 0];
 const dc = [0, 0, -1, +1];
@@ -33,7 +31,8 @@ export function fireSpread_bfs(grid, rows, cols, fireStarts) {
             if (nr < 0 || nr >= rows || nc < 0 || nc >= cols)
                 continue;
             const next = nr * cols + nc;
-            if ((grid[next] & TILE) && fireTime[next] === Infinity) {
+            const isPassableForFire = (grid[next] === CELL.TILE || grid[next] === CELL.PERSON);
+            if (isPassableForFire && fireTime[next] === Infinity) {
                 fireTime[next] = fireTime[cur] + 1;
                 queue.push(next);
             }
