@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stack, Paper, Group } from "@mantine/core"; // Bỏ Button, Slider, Text ở đây
+import { Stack, Paper, Group } from "@mantine/core"; 
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import SimControls from "../tools/SimControls";
 import SpeedSlider from "../tools/SpeedSlider";
+import PathAlgoSelect from "../tools/PathAlgoSelect";
 import { CELL } from "../../utils/constants";
 import { fireSpread_bfs } from "../../utils/fireSpreading_bfs";
 import { findPath_bfs } from "../../utils/pathFinding_bfs";
@@ -13,9 +14,13 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [speed, setSpeed] = useState(100);
 
-  const originalGridRef = useRef(null);
-  const simDataRef = useRef({ fireTime: null, path: null });
-  const tickRef = useRef(0);
+  // State lưu thuật toán đang được chọn (mặc định là bfs)
+  const [pathAlgo, setPathAlgo] = useState('bfs');
+
+// Các Ref để lưu trữ dữ liệu "vô hình" (không gây re-render)
+  const originalGridRef = useRef(null); // Lưu bản đồ gốc trước khi cháy
+  const simDataRef = useRef({ fireTime: null, path: null }); // Lưu kết quả BFS
+  const tickRef = useRef(0); // Bộ đếm thời gian (bước chạy)
 
 // Khởi tạo dữ liệu BFS khi bấm Play LẦN ĐẦU TIÊN
   const initSimulation = () => {
@@ -35,10 +40,20 @@ export default function SimulationMode({ mazeData, setMazeData }) {
       return false;
     }
 
-    // Tính toán thuật toán của Kiên
+    // Tính toán thời gian lửa lan
     const fireTime = fireSpread_bfs(grid, h, w, fireStarts);
-    const path = findPath_bfs(grid, h, w, personStart, fireTime);
-
+    // KHAI BÁO BẰNG LET ĐỂ CÓ THỂ THAY ĐỔI ĐƯỢC
+    let path = null;
+    // Quyết định chạy thuật toán nào dựa vào state `pathAlgo`
+    if (pathAlgo === 'bfs') {
+      path = pathFinding_bfs(grid, h, w, personStart, fireTime);
+    } else if (pathAlgo === 'astar') {
+      alert("A* đang cập nhật");
+      return false; 
+    } else {
+      alert("Đang cập nhật");
+      return false;
+    }
     // Lưu lại bản sao gốc và kết quả thuật toán
     originalGridRef.current = new Uint8Array(grid);
     simDataRef.current = { fireTime, path };
@@ -102,11 +117,11 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     return () => clearInterval(interval);
   }, [isPlaying, speed]);
 
-  const handlePlayPause = () => {
-    // Nếu chưa có bản đồ gốc (tức là chưa chạy bao giờ), thì khởi tạo
-    if (!originalGridRef.current) {
+const handlePlayPause = () => {
+    // Ép tính toán lại đường đi mới nhất mỗi khi bấm Play từ trạng thái đang dừng
+    if (!isPlaying) {
       const isReady = initSimulation();
-      if (!isReady) return; // Nếu lỗi (ko có người) thì hủy
+      if (!isReady) return; 
     }
     setIsPlaying(!isPlaying);
   };
@@ -129,6 +144,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
       {/* Thay vì dùng Paper, ta gọi Toolbar và nhét các component mới tạo vào */}
       <Toolbar>
         <Group position="apart" align="center" w="100%" gap="xl">
+          <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
           <SimControls 
             isPlaying={isPlaying} 
             onPlayPause={handlePlayPause} 
