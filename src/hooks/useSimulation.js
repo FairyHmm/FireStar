@@ -1,24 +1,30 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
+import { ALGORITHMS } from "../utils/solver/index";
 
 export const useSimulation = ({ mazeData, setMazeData }) => {
   // --- SIMULATION STATE ---
-  const [algoName, setAlgoName] = useState("bfs");
+  const [algoKey, setAlgoKey] = useState("bfs");
   const planRef = useRef(null);
+
+  const algoFn = useMemo(() => {
+    const config = ALGORITHMS[algoKey];
+    return config?.fn || null;
+  }, [algoKey]);
 
   // --- LOGIC: Initialise (Calculate Plan) ---
   const preparePlan = useCallback(() => {
     try {
       const { grid, w, h } = mazeData;
-      const plan = initialiseSimulation(grid, w, h, algoName);
+      const plan = initializeSimulation(grid, w, h, algoFn);
       planRef.current = plan;
       return true;
     } catch (error) {
       alert(error.message);
       return false;
     }
-  }, [mazeData, algoName]);
+  }, [mazeData, algoFn]);
 
   // --- LOGIC: Handle Reset ---
   const handleReset = useCallback(() => {
@@ -60,8 +66,8 @@ export const useSimulation = ({ mazeData, setMazeData }) => {
   );
 
   return {
-    algoName,
-    setAlgoName,
+    algoKey,
+    setAlgoKey,
     handleTick,
     handleReset,
   };

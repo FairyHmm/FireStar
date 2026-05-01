@@ -1,14 +1,12 @@
 import { Menu, Button, Stack, Text } from "@mantine/core";
+import { ALGORITHMS } from "../../utils/solver/index";
 
-export default function AlgorithmPicker({ algo, setAlgo }) {
-  const algos = [
-    { value: "bfs", label: "BFS" },
-    { value: "astar", label: "A* (Đang cập nhật...)", disabled: true },
-    { value: "iddfs", label: "idDFS (Đang cập nhật...)", disabled: true },
-    { value: "beam", label: "Beam Search (Đang cập nhật...)", disabled: true },
-  ];
+export default function AlgorithmPicker({ algoKey, setAlgoKey }) {
+  // Map the registry object to an array for rendering
+  const algoList = Object.values(ALGORITHMS);
 
-  const currentLabel = algos.find((i) => i.value === algo)?.label;
+  // Find label of currently selected function
+  const currentConfig = algoList.find((i) => i.value === algoKey) || ALGORITHMS.bfs;
 
   return (
     <Stack gap={4} w={220}>
@@ -38,23 +36,21 @@ export default function AlgorithmPicker({ algo, setAlgo }) {
             fullWidth
             rightSection={<Text size="xs">▼</Text>}
           >
-            {currentLabel}
+            {currentConfig.label}
           </Button>
         </Menu.Target>
 
         <Menu.Dropdown>
-          {algos.map((item) => (
+          {algoList.map((item, index) => (
             <Menu.Item
-              key={item.value}
+              key={index}
               disabled={item.disabled}
               onClick={() => setAlgo(item.value)}
               styles={{
                 item: {
-                  fontWeight: algo === item.value ? 600 : 400,
+                  fontWeight: item.fn === algoKey ? 600 : 400,
                   backgroundColor:
-                    algo === item.value
-                      ? "var(--mantine-color-blue-light)"
-                      : "",
+                    item.fn === algoKey ? "var(--mantine-color-blue-light)" : "",
                 },
               }}
             >

@@ -12,7 +12,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   const [speed, setSpeed] = useState(100);
 
   // 1. Get Simulation Logic
-  const { algoName, setAlgoName, handleTick, handleReset } = useSimulation({
+  const { algoKey, setAlgoKey, handleTick, handleReset } = useSimulation({
     mazeData,
     setMazeData,
   });
@@ -30,7 +30,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   return (
     <Stack h="100%" spacing="md" align="center" mt="md">
       <Toolbar>
-        <AlgorithmPicker algo={algoName} setAlgo={setAlgoName} />
+        <AlgorithmPicker algoKey={algoKey} setAlgoKey={setAlgoKey} />
         <PlaybackControls
           isPlaying={isPlaying}
           onPlayPause={togglePlay}

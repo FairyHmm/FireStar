@@ -1,8 +1,7 @@
 import { CELL } from "../constants";
 import { bfsFireSpread } from "../bfsFireSpread";
-import { bfsSolve } from "../solver/bfsSolve";
 
-export const initialiseSimulation = (grid, w, h, algoName) => {
+export const initialiseSimulation = (grid, w, h, algoFn) => {
   const size = w * h;
   const fireStarts = [];
   let personStart = -1;
@@ -21,11 +20,11 @@ export const initialiseSimulation = (grid, w, h, algoName) => {
   const fireTime = bfsFireSpread(grid, h, w, fireStarts);
 
   let path = null;
-  if (algoName === "bfs") {
-    path = bfsSolve(grid, h, w, personStart, fireTime);
-  } else if (algoName === "astar") {
-    // Placeholder for future A*
-    throw new Error("A* đang cập nhật");
+  if (algoFn && typeof algoFn === 'function') {
+    path = algoFn(grid, h, w, personStart, fireTime);
+  } else {
+    // Should not happen if UI is correct, but good safety net
+    throw new Error("Thuật toán này chưa có sẵn.");
   }
 
   // 3. Return the "Plan"
