@@ -98,11 +98,10 @@ export const useCanvas = ({
         isResize ||
         !isReadOnly;
 
-      // 3. Render Entity if: Resizing OR Editing Entity (Person/Fire) OR Have found path
+      // 3. Render Entity if: Resizing OR Editing OR Have found path
       const shouldRenderEntity =
         isResize ||
-        activeTool === "person" ||
-        activeTool === "fire" ||
+        activeTool ||
         isReadOnly;
 
       // --- EXECUTE RENDER ---

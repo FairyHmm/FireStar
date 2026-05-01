@@ -33,12 +33,12 @@ export const attachDrawListener = (bgLayer, toolRef, stateRef, setMazeData) => {
           newGrid[i] &= ~CELL.PERSON;
       newGrid[index] |= CELL.PERSON;
     }
+    else if (currentTool === 'fire')
+      newGrid[index] |= CELL.FIRE_CURRENT;
     else if (currentTool === 'wall')
       newGrid[index] = CELL.WALL;
     else if (currentTool === 'tile')
       newGrid[index] = CELL.TILE;
-    else if (currentTool === 'fire')
-      newGrid[index] |= CELL.FIRE_CURRENT;
 
     setMazeData((prev) => ({ ...prev, grid: newGrid }));
   };
