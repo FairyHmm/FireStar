@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Group, Button, Slider, Text, Paper, Stack } from "@mantine/core";
+import { Stack, Paper, Group } from "@mantine/core"; // Bỏ Button, Slider, Text ở đây
 import Canvas from "../Canvas";
+import Toolbar from "../Toolbar";
+import SimControls from "../tools/SimControls";
+import SpeedSlider from "../tools/SpeedSlider";
 import { CELL } from "../../utils/constants";
 import { fireSpread_bfs } from "../../utils/fireSpreading_bfs";
 import { findPath_bfs } from "../../utils/pathFinding_bfs";
@@ -10,12 +13,11 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [speed, setSpeed] = useState(100);
 
-  // Các Ref để lưu trữ dữ liệu "vô hình" (không gây re-render)
-  const originalGridRef = useRef(null); // Lưu bản đồ gốc trước khi cháy
-  const simDataRef = useRef({ fireTime: null, path: null }); // Lưu kết quả BFS
-  const tickRef = useRef(0); // Bộ đếm thời gian (bước chạy)
+  const originalGridRef = useRef(null);
+  const simDataRef = useRef({ fireTime: null, path: null });
+  const tickRef = useRef(0);
 
-  // Khởi tạo dữ liệu BFS khi bấm Play LẦN ĐẦU TIÊN
+// Khởi tạo dữ liệu BFS khi bấm Play LẦN ĐẦU TIÊN
   const initSimulation = () => {
     const { grid, w, h } = mazeData;
     const size = w * h;
@@ -121,58 +123,27 @@ export default function SimulationMode({ mazeData, setMazeData }) {
       originalGridRef.current = null;
       simDataRef.current = { fireTime: null, path: null };
     }
-  };
-
+  } 
   return (
-    <Stack h="100%" spacing="md">
-      <Paper shadow="sm" p="md" withBorder radius="md">
-        <Group position="apart" align="center">
-          <Group>
-            <Button
-              color={isPlaying ? "red" : "teal"}
-              onClick={handlePlayPause}
-              size="md"
-            >
-              {isPlaying ? "⏸ Tạm dừng" : "▶ Bắt đầu chạy"}
-            </Button>
-            <Button variant="default" onClick={handleReset} size="md">
-              🔄 Đặt lại
-            </Button>
-          </Group>
-
-          <Group style={{ width: 350 }}>
-            <Text
-              size="sm"
-              weight={600}
-              color="dimmed"
-              style={{ width: 170, flexShrink: 0 }}
-            >
-              Tốc độ (ms/bước): {speed}
-            </Text>
-            <Slider
-              value={speed}
-              onChange={setSpeed}
-              min={10}
-              max={500}
-              step={10}
-              style={{ flex: 1 }}
-              color="orange"
-              marks={[
-                { value: 10, label: "Nhanh" },
-                { value: 250, label: "Thường" },
-                { value: 500, label: "Chậm" },
-              ]}
-            />
-          </Group>
+    <Stack h="100%" spacing="md" align="center" mt="md">
+      {/* Thay vì dùng Paper, ta gọi Toolbar và nhét các component mới tạo vào */}
+      <Toolbar>
+        <Group position="apart" align="center" w="100%" gap="xl">
+          <SimControls 
+            isPlaying={isPlaying} 
+            onPlayPause={handlePlayPause} 
+            onReset={handleReset} 
+          />
+          <SpeedSlider speed={speed} setSpeed={setSpeed} />
         </Group>
-      </Paper>
+      </Toolbar>
 
       <Paper
         shadow="sm"
         p="0"
         withBorder
         radius="md"
-        style={{ flex: 1, overflow: "hidden" }}
+        style={{ flex: 1, overflow: "hidden", width: "100%", maxWidth: 800 }}
       >
         <Canvas
           mazeData={mazeData}
