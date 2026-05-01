@@ -4,7 +4,7 @@ import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import PlaybackControls from "../tools/PlaybackControls";
 import SpeedSlider from "../tools/SpeedSlider";
-import PathAlgoSelect from "../tools/PathAlgoSelect";
+import AlgorithmPicker from "../tools/AlgorithmPicker";
 import { CELL } from "../../utils/constants";
 import { bfsFireSpread } from "../../utils/bfsFireSpread";
 import { bfsSolve } from "../../utils/solver/bfsSolve";
@@ -144,7 +144,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   return (
     <Stack h="100%" spacing="md" align="center" mt="md">
       <Toolbar>
-        <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
+        <AlgorithmPicker algo={pathAlgo} setAlgo={setPathAlgo} />
         <PlaybackControls
           isPlaying={isPlaying}
           onPlayPause={handlePlayPause}
