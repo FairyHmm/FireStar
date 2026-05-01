@@ -31,8 +31,8 @@ export default function SimulationMode({ mazeData, setMazeData }) {
 
     // Quét bản đồ tìm Người và Lửa
     for (let i = 0; i < size; i++) {
-      if (grid[i] === CELL.FIRE_CURRENT) fireStarts.push(i);
-      if (grid[i] === CELL.PERSON) personStart = i;
+      if (grid[i] & CELL.FIRE_CURRENT) fireStarts.push(i);
+      if (grid[i] & CELL.PERSON) personStart = i;
     }
 
     if (personStart === -1) {
@@ -74,7 +74,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     // 1. Lan Lửa: Ô nào có thời gian cháy <= currentTick thì biến thành Lửa
     for (let i = 0; i < newGrid.length; i++) {
       if (fireTime[i] <= currentTick) {
-        newGrid[i] = CELL.FIRE_CURRENT;
+        newGrid[i] |= CELL.FIRE_CURRENT;
       }
     }
 
@@ -87,16 +87,17 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     } else {
       // Đứng im chịu trận nếu không có đường
       // (Bạn quét lại map gốc để lấy vị trí đầu tiên của người)
-      currentPos = originalGridRef.current.indexOf(CELL.PERSON);
+      currentPos = originalGridRef.current.findIndex(val => val & CELL.PERSON);
     }
 
     // Xóa vị trí người cũ (nếu nó chưa bị cháy) và vẽ người ở vị trí mới
     for (let i = 0; i < newGrid.length; i++) {
-      if (newGrid[i] === CELL.PERSON) newGrid[i] = CELL.TILE;
+      if (newGrid[i] & CELL.PERSON) 
+        newGrid[i] &= ~CELL.TILE;
     }
     // Nếu ô người đứng bị cháy, thì hiển thị Lửa (chết), nếu không thì hiển thị Người
-    if (newGrid[currentPos] !== CELL.FIRE_CURRENT) {
-      newGrid[currentPos] = CELL.PERSON;
+    if (newGrid[currentPos] & CELL.FIRE_CURRENT) {
+      newGrid[currentPos] |= CELL.PERSON;
     }
 
     // Đẩy xuống Canvas để vẽ
