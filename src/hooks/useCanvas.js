@@ -6,7 +6,7 @@ import {
   renderEntityLayer,
   syncViewport,
 } from "../pixi/display";
-import { attachDrawListener } from "../pixi/events";
+import { attachDrawListener, attachHoverListener } from "../pixi/events";
 
 export const useCanvas = ({
   mazeData,
@@ -37,6 +37,7 @@ export const useCanvas = ({
   // --- 2. INITIALIZE PIXI & ATTACH LISTENER ---
   useEffect(() => {
     let cleanupInteraction;
+    let cleanupHover;
 
     const init = async () => {
       const instances = await initPixi(containerRef.current);
@@ -57,12 +58,20 @@ export const useCanvas = ({
         setMazeData,
       );
 
+      // Attach Hover Highlight
+      cleanupHover = attachHoverListener(
+        instances.viewport,
+        instances.hoverLayer,
+        toolRef,
+        stateRef
+      );
+
       // Initial Render if data exists
       if (stateRef.current.grid.length > 0) {
         const { w, h, grid } = stateRef.current;
         syncViewport(instances.viewport, w, h);
         renderBaseLayer(instances.bgLayer, grid, w, h);
-        renderAlgoLayer(instances.entityLayer, grid, w, h);
+        renderAlgoLayer(instances.algoLayer, grid, w, h);
         renderEntityLayer(instances.entityLayer, grid, w, h);
       }
     };
@@ -72,6 +81,7 @@ export const useCanvas = ({
     // Prevent memory leaks when the component unmounts
     return () => {
       if (cleanupInteraction) cleanupInteraction();
+      if (cleanupHover) cleanupHover();
       if (instancesRef.current) instancesRef.current.destroy();
       if (containerRef.current) containerRef.current.innerHTML = "";
     };
@@ -89,20 +99,13 @@ export const useCanvas = ({
 
       // 1. Render Background if: Resizing OR Editing Base Layer (Wall/Tile)
       const shouldRenderBase =
-        isResize ||
-        activeTool === "wall" ||
-        activeTool === "tile";
+        isResize || activeTool === "wall" || activeTool === "tile";
 
       // 2. Render Algo if: Resizing OR Not found path yet
-      const shouldRenderAlgo =
-        isResize ||
-        !isReadOnly;
+      const shouldRenderAlgo = isResize || !isReadOnly;
 
       // 3. Render Entity if: Resizing OR Editing OR Have found path
-      const shouldRenderEntity =
-        isResize ||
-        activeTool ||
-        isReadOnly;
+      const shouldRenderEntity = isResize || activeTool || isReadOnly;
 
       // --- EXECUTE RENDER ---
       if (shouldRenderBase) renderBaseLayer(bgLayer, grid, w, h);

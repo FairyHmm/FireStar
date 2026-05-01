@@ -36,10 +36,23 @@ export const initPixi = async (container) => {
   entityLayer.eventMode = "none";
   viewport.addChild(entityLayer);
 
+  // Layer 4: Hover
+  const hoverLayer = new PIXI.Graphics();
+  hoverLayer.eventMode = "none";
+  viewport.addChild(hoverLayer);
+
   const destroy = () => {
     app.destroy(true, { children: true });
     if (container) container.innerHTML = "";
   };
 
-  return { app, viewport, bgLayer, algoLayer, entityLayer, destroy };
+  return {
+    app,
+    viewport,
+    bgLayer,
+    algoLayer,
+    entityLayer,
+    hoverLayer,
+    destroy,
+  };
 };

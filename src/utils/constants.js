@@ -22,6 +22,13 @@ export const COLORS = {
   [CELL.FIRE_NEXT]:    0xffaaaa,
 };
 
+export const TOOL_COLORS = {
+  wall:   0x000000,
+  tile:   0xffffff,
+  person: 0x00ff00,
+  fire:   0xff0000,
+};
+
 export const getColor = (val) => {
   if (val & CELL.PERSON)
     return COLORS[CELL.PERSON];

@@ -1,4 +1,4 @@
-import { CELL, tileSize } from "../utils/constants";
+import { CELL, TOOL_COLORS, tileSize } from "../utils/constants";
 
 export const attachDrawListener = (bgLayer, toolRef, stateRef, setMazeData) => {
   const handleDraw = (e) => {
@@ -47,5 +47,51 @@ export const attachDrawListener = (bgLayer, toolRef, stateRef, setMazeData) => {
 
   return () => {
     bgLayer.off('pointerdown', handleDraw);
+  };
+};
+
+export const attachHoverListener = (viewport, hoverLayer, toolRef, stateRef) => {
+  const handleMove = (e) => {
+    const currentTool = toolRef.current;
+
+    if (!currentTool) {
+      hoverLayer.clear();
+      return;
+    }
+
+    // Get coordinates
+    const localPos = viewport.toLocal(e.data.global || e.global); // Fallback for different PIXI versions
+    const x = Math.floor(localPos.x / tileSize);
+    const y = Math.floor(localPos.y / tileSize);
+
+    // --- BOUNDARY CHECK ---
+    // Get current width/height from the ref
+    const { w, h } = stateRef.current;
+
+    // If outside the maze grid, clear highlight and stop
+    if (x < 0 || x >= w || y < 0 || y >= h) {
+      hoverLayer.clear();
+      return;
+    }
+
+    // Get color for current tool
+    const color = TOOL_COLORS[currentTool];
+
+    // Draw highlight square
+    hoverLayer.clear();
+    hoverLayer.rect(x * tileSize, y * tileSize, tileSize, tileSize);
+    hoverLayer.fill({ color, alpha: 0.5 });
+  };
+
+  const handleLeave = () => {
+    hoverLayer.clear();
+  };
+
+  viewport.on('pointermove', handleMove);
+  viewport.on('pointerleave', handleLeave);
+
+  return () => {
+    viewport.off('pointermove', handleMove);
+    viewport.off('pointerleave', handleLeave);
   };
 };
