@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Stack, Paper, Group } from "@mantine/core";
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
-import SimControls from "../tools/SimControls";
+import PlaybackControls from "../tools/PlaybackControls";
 import SpeedSlider from "../tools/SpeedSlider";
 import PathAlgoSelect from "../tools/PathAlgoSelect";
 import { CELL } from "../../utils/constants";
@@ -46,7 +46,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     let path = null;
     // Quyết định chạy thuật toán nào dựa vào state `pathAlgo`
     if (pathAlgo === "bfs") {
-      path = pathFinding_bfs(grid, h, w, personStart, fireTime);
+      path = bfsSolve(grid, h, w, personStart, fireTime);
     } else if (pathAlgo === "astar") {
       alert("A* đang cập nhật");
       return false;
@@ -144,15 +144,13 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   return (
     <Stack h="100%" spacing="md" align="center" mt="md">
       <Toolbar>
-        <Group gap="md" aligh="center">
-          <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
-          <SimControls
-            isPlaying={isPlaying}
-            onPlayPause={handlePlayPause}
-            onReset={handleReset}
-          />
-          <SpeedSlider speed={speed} setSpeed={setSpeed} />
-        </Group>
+        <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
+        <PlaybackControls
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+          onReset={handleReset}
+        />
+        <SpeedSlider speed={speed} setSpeed={setSpeed} />
       </Toolbar>
       <Canvas
         mazeData={mazeData}
