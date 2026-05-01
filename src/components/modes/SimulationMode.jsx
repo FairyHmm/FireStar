@@ -142,9 +142,8 @@ const handlePlayPause = () => {
   } 
   return (
     <Stack h="100%" spacing="md" align="center" mt="md">
-      {/* Thay vì dùng Paper, ta gọi Toolbar và nhét các component mới tạo vào */}
       <Toolbar>
-        <Group position="apart" align="center" w="100%" gap="xl">
+        <Group gap = "md" aligh = "center">
           <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
           <SimControls 
             isPlaying={isPlaying} 
@@ -154,20 +153,11 @@ const handlePlayPause = () => {
           <SpeedSlider speed={speed} setSpeed={setSpeed} />
         </Group>
       </Toolbar>
-
-      <Paper
-        shadow="sm"
-        p="0"
-        withBorder
-        radius="md"
-        style={{ flex: 1, overflow: "hidden", width: "100%", maxWidth: 800 }}
-      >
-        <Canvas
-          mazeData={mazeData}
-          setMazeData={setMazeData}
-          isReadOnly={isReadOnly}
-        />
-      </Paper>
+      <Canvas
+        mazeData={mazeData}
+        setMazeData={setMazeData}
+        isReadOnly={isReadOnly}
+      />
     </Stack>
   );
 }
