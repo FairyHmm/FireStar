@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Stack, Text, Group } from "@mantine/core";
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
-import MapSizeInput from "../tools/MapSizeInput";
+import MazeSizeInput from "../tools/MazeSizeInput";
 import MazeGeneration from "../tools/MazeGeneration";
 import DrawTools from "../tools/DrawTools";
 import { dfsGen } from "../../utils/generator/dfsGen";
@@ -24,7 +24,7 @@ export default function DesignMode({ mazeData, setMazeData }) {
   return (
     <Stack align="center" mt="md">
       <Toolbar>
-        <MapSizeInput w={w} setW={setW} h={h} setH={setH} />
+        <MazeSizeInput w={w} setW={setW} h={h} setH={setH} />
         <MazeGeneration
           algo={algo}
           setAlgo={setAlgo}
