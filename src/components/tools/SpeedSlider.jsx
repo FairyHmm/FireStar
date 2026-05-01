@@ -1,9 +1,14 @@
-import { Group, Text, Slider } from '@mantine/core';
+import { Group, Text, Slider } from "@mantine/core";
 
 export default function SpeedSlider({ speed, setSpeed }) {
   return (
     <Group style={{ width: 350 }}>
-      <Text size="sm" weight={600} c="dimmed" style={{ width: 170, flexShrink: 0 }}>
+      <Text
+        size="sm"
+        weight={600}
+        c="dimmed"
+        style={{ width: 170, flexShrink: 0 }}
+      >
         Tốc độ (ms/bước): {speed}
       </Text>
       <Slider
