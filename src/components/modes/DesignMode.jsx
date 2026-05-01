@@ -3,8 +3,7 @@ import { Stack, Text, Group } from "@mantine/core";
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import MapSizeInput from "../tools/MapSizeInput";
-import AlgoSelect from "../tools/AlgoSelect";
-import GenMapButton from "../tools/GenMapButton";
+import MazeGeneration from "../tools/MazeGeneration";
 import DrawTools from "../tools/DrawTools";
 import { dfsGen } from "../../utils/generator/dfsGen";
 
@@ -26,10 +25,11 @@ export default function DesignMode({ mazeData, setMazeData }) {
     <Stack align="center" mt="md">
       <Toolbar>
         <MapSizeInput w={w} setW={setW} h={h} setH={setH} />
-        <Group gap="xs">
-          <AlgoSelect algo={algo} setAlgo={setAlgo} />
-          <GenMapButton onClick={handleRandomise} />
-        </Group>
+        <MazeGeneration
+          algo={algo}
+          setAlgo={setAlgo}
+          onGenerate={handleRandomise}
+        />
         <DrawTools activeTool={activeTool} setActiveTool={setActiveTool} />
       </Toolbar>
 
