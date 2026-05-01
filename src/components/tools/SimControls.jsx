@@ -1,4 +1,4 @@
-import { Group, Button } from '@mantine/core';
+import { Group, Button } from "@mantine/core";
 
 export default function SimControls({ isPlaying, onPlayPause, onReset }) {
   return (

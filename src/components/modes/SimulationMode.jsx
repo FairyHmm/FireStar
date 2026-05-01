@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Stack, Paper, Group } from "@mantine/core"; 
+import { Stack, Paper, Group } from "@mantine/core";
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import SimControls from "../tools/SimControls";
@@ -15,14 +15,14 @@ export default function SimulationMode({ mazeData, setMazeData }) {
   const [speed, setSpeed] = useState(100);
 
   // State lưu thuật toán đang được chọn (mặc định là bfs)
-  const [pathAlgo, setPathAlgo] = useState('bfs');
+  const [pathAlgo, setPathAlgo] = useState("bfs");
 
-// Các Ref để lưu trữ dữ liệu "vô hình" (không gây re-render)
+  // Các Ref để lưu trữ dữ liệu "vô hình" (không gây re-render)
   const originalGridRef = useRef(null); // Lưu bản đồ gốc trước khi cháy
   const simDataRef = useRef({ fireTime: null, path: null }); // Lưu kết quả BFS
   const tickRef = useRef(0); // Bộ đếm thời gian (bước chạy)
 
-// Khởi tạo dữ liệu BFS khi bấm Play LẦN ĐẦU TIÊN
+  // Khởi tạo dữ liệu BFS khi bấm Play LẦN ĐẦU TIÊN
   const initSimulation = () => {
     const { grid, w, h } = mazeData;
     const size = w * h;
@@ -45,11 +45,11 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     // KHAI BÁO BẰNG LET ĐỂ CÓ THỂ THAY ĐỔI ĐƯỢC
     let path = null;
     // Quyết định chạy thuật toán nào dựa vào state `pathAlgo`
-    if (pathAlgo === 'bfs') {
+    if (pathAlgo === "bfs") {
       path = pathFinding_bfs(grid, h, w, personStart, fireTime);
-    } else if (pathAlgo === 'astar') {
+    } else if (pathAlgo === "astar") {
       alert("A* đang cập nhật");
-      return false; 
+      return false;
     } else {
       alert("Đang cập nhật");
       return false;
@@ -87,13 +87,14 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     } else {
       // Đứng im chịu trận nếu không có đường
       // (Bạn quét lại map gốc để lấy vị trí đầu tiên của người)
-      currentPos = originalGridRef.current.findIndex(val => val & CELL.PERSON);
+      currentPos = originalGridRef.current.findIndex(
+        (val) => val & CELL.PERSON,
+      );
     }
 
     // Xóa vị trí người cũ (nếu nó chưa bị cháy) và vẽ người ở vị trí mới
     for (let i = 0; i < newGrid.length; i++) {
-      if (newGrid[i] & CELL.PERSON) 
-        newGrid[i] &= ~CELL.TILE;
+      if (newGrid[i] & CELL.PERSON) newGrid[i] &= ~CELL.TILE;
     }
     // Nếu ô người đứng bị cháy, thì hiển thị Lửa (chết), nếu không thì hiển thị Người
     if (newGrid[currentPos] & CELL.FIRE_CURRENT) {
@@ -118,11 +119,11 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     return () => clearInterval(interval);
   }, [isPlaying, speed]);
 
-const handlePlayPause = () => {
+  const handlePlayPause = () => {
     // Ép tính toán lại đường đi mới nhất mỗi khi bấm Play từ trạng thái đang dừng
     if (!isPlaying) {
       const isReady = initSimulation();
-      if (!isReady) return; 
+      if (!isReady) return;
     }
     setIsPlaying(!isPlaying);
   };
@@ -139,16 +140,16 @@ const handlePlayPause = () => {
       originalGridRef.current = null;
       simDataRef.current = { fireTime: null, path: null };
     }
-  } 
+  };
   return (
     <Stack h="100%" spacing="md" align="center" mt="md">
       <Toolbar>
-        <Group gap = "md" aligh = "center">
+        <Group gap="md" aligh="center">
           <PathAlgoSelect algo={pathAlgo} setAlgo={setPathAlgo} />
-          <SimControls 
-            isPlaying={isPlaying} 
-            onPlayPause={handlePlayPause} 
-            onReset={handleReset} 
+          <SimControls
+            isPlaying={isPlaying}
+            onPlayPause={handlePlayPause}
+            onReset={handleReset}
           />
           <SpeedSlider speed={speed} setSpeed={setSpeed} />
         </Group>

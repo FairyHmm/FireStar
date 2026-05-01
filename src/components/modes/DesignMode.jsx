@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Stack, Text, Group } from '@mantine/core';
-import Canvas from '../Canvas';
-import Toolbar from '../Toolbar';
-import MapSizeInput from '../tools/MapSizeInput';
-import AlgoSelect from '../tools/AlgoSelect';
-import GenMapButton from '../tools/GenMapButton';
-import DrawTools from '../tools/DrawTools';
-import { generateRandomMazeDFS } from '../../utils/mazeCore';
+import { useState } from "react";
+import { Stack, Text, Group } from "@mantine/core";
+import Canvas from "../Canvas";
+import Toolbar from "../Toolbar";
+import MapSizeInput from "../tools/MapSizeInput";
+import AlgoSelect from "../tools/AlgoSelect";
+import GenMapButton from "../tools/GenMapButton";
+import DrawTools from "../tools/DrawTools";
+import { generateRandomMazeDFS } from "../../utils/mazeCore";
 
 export default function DesignMode({ mazeData, setMazeData }) {
-  const [activeTool, setActiveTool] = useState('wall');
+  const [activeTool, setActiveTool] = useState("wall");
   const [w, setW] = useState(31);
   const [h, setH] = useState(31);
-  const [algo, setAlgo] = useState('dfs'); 
+  const [algo, setAlgo] = useState("dfs");
 
   const handleRandomise = () => {
     const validW = w % 2 === 0 ? w + 1 : w;
@@ -33,7 +33,9 @@ export default function DesignMode({ mazeData, setMazeData }) {
         <DrawTools activeTool={activeTool} setActiveTool={setActiveTool} />
       </Toolbar>
 
-      <Text c="dimmed" size="xs">Hướng dẫn: Click chuột trái để vẽ, chuột phải để di chuyển</Text>
+      <Text c="dimmed" size="xs">
+        Hướng dẫn: Click chuột trái để vẽ, chuột phải để di chuyển
+      </Text>
 
       <Canvas
         mazeData={mazeData}
