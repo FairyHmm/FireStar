@@ -6,8 +6,8 @@ import SimControls from "../tools/SimControls";
 import SpeedSlider from "../tools/SpeedSlider";
 import PathAlgoSelect from "../tools/PathAlgoSelect";
 import { CELL } from "../../utils/constants";
-import { fireSpread_bfs } from "../../utils/fireSpreading_bfs";
-import { findPath_bfs } from "../../utils/pathFinding_bfs";
+import { bfsFireSpread } from "../../utils/bfsFireSpread";
+import { bfsSolve } from "../../utils/solver/bfsSolve";
 
 export default function SimulationMode({ mazeData, setMazeData }) {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -41,7 +41,7 @@ export default function SimulationMode({ mazeData, setMazeData }) {
     }
 
     // Tính toán thời gian lửa lan
-    const fireTime = fireSpread_bfs(grid, h, w, fireStarts);
+    const fireTime = bfsFireSpread(grid, h, w, fireStarts);
     // KHAI BÁO BẰNG LET ĐỂ CÓ THỂ THAY ĐỔI ĐƯỢC
     let path = null;
     // Quyết định chạy thuật toán nào dựa vào state `pathAlgo`

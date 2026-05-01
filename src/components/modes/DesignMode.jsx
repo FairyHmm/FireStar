@@ -6,7 +6,7 @@ import MapSizeInput from "../tools/MapSizeInput";
 import AlgoSelect from "../tools/AlgoSelect";
 import GenMapButton from "../tools/GenMapButton";
 import DrawTools from "../tools/DrawTools";
-import { generateRandomMazeDFS } from "../../utils/mazeCore";
+import { dfsGen } from "../../utils/generator/dfsGen";
 
 export default function DesignMode({ mazeData, setMazeData }) {
   const [activeTool, setActiveTool] = useState("wall");
@@ -18,7 +18,7 @@ export default function DesignMode({ mazeData, setMazeData }) {
     const validW = w % 2 === 0 ? w + 1 : w;
     const validH = h % 2 === 0 ? h + 1 : h;
 
-    const newGrid = generateRandomMazeDFS(validW, validH);
+    const newGrid = dfsGen(validW, validH);
     setMazeData({ w: validW, h: validH, grid: newGrid });
   };
 
@@ -41,7 +41,7 @@ export default function DesignMode({ mazeData, setMazeData }) {
         mazeData={mazeData}
         setMazeData={setMazeData}
         activeTool={activeTool}
-        generatorFn={generateRandomMazeDFS}
+        generatorFn={dfsGen}
       />
     </Stack>
   );
