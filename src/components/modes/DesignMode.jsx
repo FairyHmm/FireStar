@@ -4,7 +4,7 @@ import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import MazeSizeInput from "../tools/MazeSizeInput";
 import MazeGeneration from "../tools/MazeGeneration";
-import DrawTools from "../tools/DrawTools";
+import MapPalette from "../tools/MapPalette";
 import { dfsGen } from "../../utils/generator/dfsGen";
 
 export default function DesignMode({ mazeData, setMazeData }) {
@@ -30,7 +30,7 @@ export default function DesignMode({ mazeData, setMazeData }) {
           setAlgo={setAlgo}
           onGenerate={handleRandomise}
         />
-        <DrawTools activeTool={activeTool} setActiveTool={setActiveTool} />
+        <MapPalette activeTool={activeTool} setActiveTool={setActiveTool} />
       </Toolbar>
 
       <Text c="dimmed" size="xs">
