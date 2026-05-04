@@ -43,6 +43,13 @@ export const useCanvas = ({
       const instances = await initPixi(containerRef.current);
       instancesRef.current = instances;
 
+      if (!stateRef.current.grid || stateRef.current.grid.length === 0) {
+        if (generatorFn) {
+          const newGrid = generatorFn(mazeData.w, mazeData.h);
+          setMazeData({ w: mazeData.w, h: mazeData.h, grid: newGrid });
+        }
+      }
+
       // Auto-generate default maze if missing
       if (stateRef.current.grid.length === 0 && generatorFn) {
         const { w, h } = stateRef.current;
@@ -52,7 +59,7 @@ export const useCanvas = ({
 
       // Attach mouse/drawing events
       cleanupInteraction = attachDrawListener(
-        instances.bgLayer,
+        instances.viewport,
         toolRef,
         stateRef,
         setMazeData,
@@ -63,7 +70,7 @@ export const useCanvas = ({
         instances.viewport,
         instances.hoverLayer,
         toolRef,
-        stateRef
+        stateRef,
       );
 
       // Initial Render if data exists
