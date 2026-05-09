@@ -46,3 +46,10 @@ export const getColor = (val) => {
     return COLORS[CELL.FIRE_NEXT];
   return COLORS[CELL.TILE];
 };
+
+export const DIRS = [
+  [-2, 0], // Up
+  [2,  0], // Down
+  [0, -2], // Left
+  [0,  2], // Right
+];

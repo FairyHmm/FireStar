@@ -1,5 +1,5 @@
-import { CELL } from "../constants.js";
-import punchHoles from './punchHoles.js';
+import { CELL, DIRS } from "../constants.js";
+import punchHoles from "./punchHoles.js";
 import fireGen from "./fireGen.js";
 
 export function dfsGen(rows, cols) {
@@ -9,39 +9,43 @@ export function dfsGen(rows, cols) {
   const stack = [];
 
   // DFS Generation
-  let startR = Math.floor(Math.random() * ((rows - 1) / 2)) * 2 + 1;
-  let startC = Math.floor(Math.random() * ((cols - 1) / 2)) * 2 + 1;
+  const getStart = (range) => {
+    const min = Math.floor(range / 3);
+    const max = Math.ceil(range * 2 / 3);
+    return (min + Math.floor(Math.random() * (max - min))) | 1;
+  };
+  const startR = getStart(rows);
+  const startC = getStart(cols);
 
   grid[getIdx(startR, startC)] = CELL.TILE | CELL.PERSON;
   stack.push({ r: startR, c: startC });
-
-  const dr = [-2, 2, 0, 0];
-  const dc = [0, 0, -2, 2];
 
   while (stack.length > 0) {
     const cur = stack[stack.length - 1];
     const neighbors = [];
 
-    for (let i = 0; i < 4; i++) {
-      const nr = cur.r + dr[i];
-      const nc = cur.c + dc[i];
-      if (nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1) {
-        if (!(grid[getIdx(nr, nc)] & CELL.TILE)) {
-          neighbors.push({ r: nr, c: nc, dirIdx: i });
-        }
-      }
+    for (const [dr, dc] of DIRS) {
+      const nr = cur.r + dr;
+      const nc = cur.c + dc;
+      if (
+        nr > 0 &&
+        nr < rows - 1 &&
+        nc > 0 &&
+        nc < cols - 1 &&
+        grid[getIdx(nr, nc)] & CELL.WALL
+      )
+        neighbors.push({ r: nr, c: nc, dr, dc });
     }
 
     if (neighbors.length > 0) {
       const next = neighbors[Math.floor(Math.random() * neighbors.length)];
-      const wallR = cur.r + dr[next.dirIdx] / 2;
-      const wallC = cur.c + dc[next.dirIdx] / 2;
+
+      const wallIdx = getIdx(cur.r + next.dr / 2, cur.c + next.dc / 2);
+      const nextIdx = getIdx(next.r, next.c);
 
       // Carve through the wall and the next cell
-      [getIdx(wallR, wallC), getIdx(next.r, next.c)].forEach((idx) => {
-        grid[idx] &= ~CELL.WALL;
-        grid[idx] |= CELL.TILE;
-      });
+      grid[wallIdx] = CELL.TILE;
+      grid[nextIdx] = CELL.TILE;
 
       stack.push({ r: next.r, c: next.c });
     } else {
