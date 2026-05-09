@@ -1,5 +1,6 @@
 import { CELL } from "../constants.js";
 import punchHoles from './punchHoles.js';
+import fireGen from "./fireGen.js";
 
 export function dfsGen(rows, cols) {
   const size = rows * cols;
@@ -48,5 +49,7 @@ export function dfsGen(rows, cols) {
     }
   }
 
-  return punchHoles(grid, rows, cols, getIdx);;
+  punchHoles(grid, rows, cols, getIdx);
+  fireGen(grid);
+  return grid;
 }

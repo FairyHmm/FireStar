@@ -25,6 +25,4 @@ export default function punchHoles(grid, rows, cols, getIdx) {
       }
     }
   }
-
-  return grid;
 }
