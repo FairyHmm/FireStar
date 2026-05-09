@@ -6,7 +6,7 @@ export const initPixi = async (container) => {
   await app.init({
     width: 800,
     height: 600,
-    backgroundColor: 0xffffff,
+    backgroundColor: 0xd6dfe9,
     resolution: window.devicePixelRatio || 1,
   });
 

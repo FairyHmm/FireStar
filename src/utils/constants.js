@@ -12,21 +12,21 @@ export const CELL = {
 };
 
 export const COLORS = {
-  [CELL.PERSON]:       0x00ff00,
-  [CELL.WALL]:         0x000000,
-  [CELL.TILE]:         0xffffff,
-  [CELL.EXPLORED]:     0x00ffff,
-  [CELL.FRONTIER]:     0xaaffaa,
-  [CELL.PATH]:         0x0000ff,
-  [CELL.FIRE_CURRENT]: 0xff0000,
-  [CELL.FIRE_NEXT]:    0xffaaaa,
+  [CELL.PERSON]:       0x14c741,
+  [CELL.WALL]:         0x0f172a,
+  [CELL.TILE]:         0xe2e8f0,
+  [CELL.EXPLORED]:     0x7dd3fc,
+  [CELL.FRONTIER]:     0x2dd4bf,
+  [CELL.PATH]:         0x4338ca,
+  [CELL.FIRE_CURRENT]: 0xe11d48,
+  [CELL.FIRE_NEXT]:    0xfca5a5,
 };
 
 export const TOOL_COLORS = {
-  wall:   0x000000,
-  tile:   0xffffff,
-  person: 0x00ff00,
-  fire:   0xff0000,
+  wall:   0x334155,
+  tile:   0x94a3b8,
+  person: 0x14c741,
+  fire:   0xe11d48,
 };
 
 export const getColor = (val) => {
