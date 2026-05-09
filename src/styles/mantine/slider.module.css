@@ -1,0 +1,16 @@
+.slider-root {
+  transition: all 0.3s ease;
+
+  .slider-track::before {
+    background-color: var(--color-ac);
+  }
+
+  .slider-bar {
+    transition: background-color .2s ease;
+  }
+
+  .slider-thumb {
+    border-width: 2px;
+    transition: color .2s ease;
+  }
+}

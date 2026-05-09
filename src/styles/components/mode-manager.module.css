@@ -1,5 +1,5 @@
 .container {
-  padding-top: var(--mantine-spacing-xl);
+  padding-top: var(--spacing-xl);
 }
 
 .header {

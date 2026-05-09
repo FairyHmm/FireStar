@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Container, Stack, SegmentedControl, Box } from "@mantine/core";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
-import classes from "../styles/components/mode-manager.module.css";
-import scClasses from "../styles/mantine/segmented-control.module.css";
+import classes from "../styles/components/mode-manager.module.css";;
 import { useDesign } from "../hooks/useDesign";
 import { useSimulation } from "../hooks/useSimulation";
 import { usePlayback } from "../hooks/usePlayback";
@@ -18,12 +17,12 @@ export default function ModeManager() {
 
   const designData = useDesign({
     mazeData: maze.state,
-    setMazeData: maze.actions.setGrid
+    setMazeData: maze.actions.setGrid,
   });
 
   const simulationData = useSimulation({
     mazeData: maze.state,
-    setMazeData: maze.actions.setGrid
+    setMazeData: maze.actions.setGrid,
   });
 
   const playbackData = usePlayback({
@@ -45,8 +44,7 @@ export default function ModeManager() {
   };
 
   const handleModeChange = (newMode) => {
-    if (newMode === "design")
-      maze.actions.revert();
+    if (newMode === "design") maze.actions.revert();
     setMode(newMode);
   };
 
@@ -61,10 +59,8 @@ export default function ModeManager() {
               { label: "Xây dựng", value: "design" },
               { label: "Mô phỏng", value: "simulation" },
             ]}
-            classNames={{
-              root: scClasses["toggle-root"],
-              indicator: scClasses["toggle-indicator"],
-            }}
+            color={"var(--color-primary)"}
+            style={{ backgroundColor: "var(--color-fg)" }}
           />
         </Box>
 
@@ -73,7 +69,7 @@ export default function ModeManager() {
           designProps={{
             mazeData: maze.state,
             setMazeData: maze.actions.setGrid,
-            ...designData
+            ...designData,
           }}
           simulationProps={{
             mazeData: maze.state,
@@ -83,7 +79,7 @@ export default function ModeManager() {
             togglePlay,
             resetSim,
             speed,
-            setSpeed
+            setSpeed,
           }}
         />
 
