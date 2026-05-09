@@ -50,7 +50,7 @@ export default function AlgorithmPicker({ algoKey, setAlgoKey }) {
                 item: {
                   fontWeight: item.fn === algoKey ? 600 : 400,
                   backgroundColor:
-                    item.fn === algoKey ? "var(--mantine-color-blue-light)" : "",
+                    item.fn === algoKey ? "var(--primary)" : "",
                 },
               }}
             >

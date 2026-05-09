@@ -1,0 +1,15 @@
+.toolbar {
+  display: grid;
+  grid-template-areas: "stack";
+  align-items: center;
+
+  background-color: var(--secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow: hidden;
+  min-height: 100px;
+}
+
+.panel {
+  grid-area: stack;
+}
