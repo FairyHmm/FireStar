@@ -12,7 +12,6 @@ export const useCanvas = ({
   mazeData,
   setMazeData,
   activeTool,
-  generatorFn,
   isReadOnly,
 }) => {
   // --- 1. SETUP & REFS ---
@@ -42,20 +41,6 @@ export const useCanvas = ({
     const init = async () => {
       const instances = await initPixi(containerRef.current);
       instancesRef.current = instances;
-
-      if (!stateRef.current.grid || stateRef.current.grid.length === 0) {
-        if (generatorFn) {
-          const newGrid = generatorFn(mazeData.w, mazeData.h);
-          setMazeData({ w: mazeData.w, h: mazeData.h, grid: newGrid });
-        }
-      }
-
-      // Auto-generate default maze if missing
-      if (stateRef.current.grid.length === 0 && generatorFn) {
-        const { w, h } = stateRef.current;
-        const newGrid = generatorFn(w, h);
-        setMazeData({ w, h, grid: newGrid });
-      }
 
       // Attach mouse/drawing events
       cleanupInteraction = attachDrawListener(
@@ -92,7 +77,7 @@ export const useCanvas = ({
       if (instancesRef.current) instancesRef.current.destroy();
       if (containerRef.current) containerRef.current.innerHTML = "";
     };
-  }, [generatorFn, setMazeData]);
+  }, [setMazeData]);
 
   // --- 3. RE-RENDER ON DATA CHANGE ---
   useEffect(() => {

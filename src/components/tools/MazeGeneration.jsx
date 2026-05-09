@@ -1,13 +1,10 @@
 import { Button, Group, Menu, ActionIcon } from "@mantine/core";
+// Import the centralized registry config
+import { ALGORITHMS } from "../../utils/generator";
 
 export default function MazeGeneration({ algo, setAlgo, onGenerate }) {
-  const algos = [
-    { value: "dfs", label: "DFS (Quay lui)" },
-    { value: "bfs", label: "BFS (Updating...)", disabled: true },
-    { value: "a*", label: "A* (Updating...)", disabled: true },
-  ];
-
-  const currentAlgo = algos.find((a) => a.value === algo);
+  // Convert your config object values into an array for rendering the menu
+  const algos = Object.values(ALGORITHMS);
 
   return (
     <Group wrap="nowrap" gap={0}>
@@ -57,7 +54,7 @@ export default function MazeGeneration({ algo, setAlgo, onGenerate }) {
                   fontWeight: algo === item.value ? 600 : 400,
                   backgroundColor:
                     algo === item.value
-                      ? "var(--mantine-color-blue-light)"
+                      ? "var(--primary)"
                       : "",
                 },
               }}

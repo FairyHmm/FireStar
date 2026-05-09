@@ -1,25 +1,28 @@
-import { useState } from "react";
-import { Stack, Text, Group } from "@mantine/core";
+import { useState, useEffect } from "react";
+import { Stack, Text } from "@mantine/core";
 import Canvas from "../Canvas";
 import Toolbar from "../Toolbar";
 import MazeSizeInput from "../tools/MazeSizeInput";
 import MazeGeneration from "../tools/MazeGeneration";
 import MapPalette from "../tools/MapPalette";
-import { dfsGen } from "../../utils/generator/dfsGen";
+import { ALGORITHMS } from "../../utils/generator";
 
 export default function DesignMode({ mazeData, setMazeData }) {
   const [activeTool, setActiveTool] = useState("wall");
-  const [w, setW] = useState(31);
   const [h, setH] = useState(31);
+  const [w, setW] = useState(31);
   const [algo, setAlgo] = useState("dfs");
 
-  const handleRandomise = () => {
-    const validW = w % 2 === 0 ? w + 1 : w;
-    const validH = h % 2 === 0 ? h + 1 : h;
-
-    const newGrid = dfsGen(validW, validH);
-    setMazeData({ w: validW, h: validH, grid: newGrid });
+  const handleGenerate = () => {
+    const generatorFn = ALGORITHMS[algo]?.fn;
+    // Force maze sizes to be odd
+    const newGrid = generatorFn(h | 1, w | 1);
+    setMazeData({ h: h | 1, w: w | 1, grid: newGrid });
   };
+
+  useEffect(() => {
+    handleGenerate();
+  }, [h, w, algo]);
 
   return (
     <Stack align="center" mt="md">
@@ -28,7 +31,7 @@ export default function DesignMode({ mazeData, setMazeData }) {
         <MazeGeneration
           algo={algo}
           setAlgo={setAlgo}
-          onGenerate={handleRandomise}
+          onGenerate={handleGenerate}
         />
         <MapPalette activeTool={activeTool} setActiveTool={setActiveTool} />
       </Toolbar>
@@ -41,7 +44,6 @@ export default function DesignMode({ mazeData, setMazeData }) {
         mazeData={mazeData}
         setMazeData={setMazeData}
         activeTool={activeTool}
-        generatorFn={dfsGen}
       />
     </Stack>
   );
