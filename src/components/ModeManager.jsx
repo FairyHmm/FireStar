@@ -7,25 +7,32 @@ import scClasses from "../styles/mantine/segmented-control.module.css";
 import { useDesign } from "../hooks/useDesign";
 import { useSimulation } from "../hooks/useSimulation";
 import { usePlayback } from "../hooks/usePlayback";
+import { useMaze } from "../hooks/useMaze";
 
 export default function ModeManager() {
   const [mode, setMode] = useState("design");
-
-  const [mazeData, setMazeData] = useState({
-    grid: new Uint8Array(0),
-    w: 31,
-    h: 31,
-  });
-
   const [speed, setSpeed] = useState(100);
 
-  // Hooks
-  const designData = useDesign({ mazeData, setMazeData });
-  const simulationData = useSimulation({ mazeData, setMazeData });
+  // Centralized Maze Hook
+  const maze = useMaze();
+
+  const designData = useDesign({
+    mazeData: maze.state,
+    setMazeData: maze.actions.setGrid
+  });
+
+  const simulationData = useSimulation({
+    mazeData: maze.state,
+    setMazeData: maze.actions.setGrid
+  });
+
   const playbackData = usePlayback({
     interval: speed,
     onTick: simulationData.handleTick,
-    onReset: simulationData.handleReset,
+    onReset: () => {
+      simulationData.handleReset();
+      maze.actions.revert();
+    },
   });
 
   const togglePlay = () =>
@@ -33,7 +40,14 @@ export default function ModeManager() {
 
   const resetSim = () => {
     simulationData.handleReset();
+    maze.actions.revert();
     playbackData.reset();
+  };
+
+  const handleModeChange = (newMode) => {
+    if (newMode === "design")
+      maze.actions.revert();
+    setMode(newMode);
   };
 
   return (
@@ -42,7 +56,7 @@ export default function ModeManager() {
         <Box className={classes.header}>
           <SegmentedControl
             value={mode}
-            onChange={setMode}
+            onChange={handleModeChange}
             data={[
               { label: "Xây dựng", value: "design" },
               { label: "Mô phỏng", value: "simulation" },
@@ -56,10 +70,14 @@ export default function ModeManager() {
 
         <Toolbar
           mode={mode}
-          designProps={{ mazeData, setMazeData, ...designData }}
+          designProps={{
+            mazeData: maze.state,
+            setMazeData: maze.actions.setGrid,
+            ...designData
+          }}
           simulationProps={{
-            mazeData,
-            setMazeData,
+            mazeData: maze.state,
+            setMazeData: maze.actions.setGrid,
             ...simulationData,
             ...playbackData,
             togglePlay,
@@ -70,8 +88,8 @@ export default function ModeManager() {
         />
 
         <Canvas
-          mazeData={mazeData}
-          setMazeData={setMazeData}
+          mazeData={maze.state}
+          setMazeData={maze.actions.setGrid}
           activeTool={mode === "design" ? designData.activeTool : null}
           isReadOnly={mode === "simulation"}
         />
