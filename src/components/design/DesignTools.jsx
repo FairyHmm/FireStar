@@ -3,16 +3,7 @@ import MazeSizeInput from "./MazeSizeInput";
 import MapPalette from "./MapPalette";
 import MazeGeneration from "./MazeGeneration";
 
-export default function DesignTools({
-  activeTool,
-  setActiveTool,
-  mazeData,
-  setMazeData,
-  genAlgoKey,
-  setGenAlgoKey,
-  handleGenerate,
-  handleReset,
-}) {
+export default function DesignTools({ design, mazeData, setMazeData }) {
   return (
     <Group justify="space-between">
       <MazeSizeInput
@@ -22,12 +13,12 @@ export default function DesignTools({
         setH={(h) => setMazeData({ h })}
       />
       <MazeGeneration
-        algo={genAlgoKey}
-        setAlgo={setGenAlgoKey}
-        onGenerate={handleGenerate}
-        onReset={handleReset}
+        algo={design.genAlgoKey}
+        setAlgo={design.setGenAlgoKey}
+        onGenerate={design.handleGenerate}
+        onReset={design.handleReset}
       />
-      <MapPalette activeTool={activeTool} setActiveTool={setActiveTool} />
+      <MapPalette activeTool={design.activeTool} setActiveTool={design.setActiveTool} />
     </Group>
   );
 }

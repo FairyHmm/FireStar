@@ -31,7 +31,7 @@ export default function Toolbar({
         {(styles) => (
           <div style={{ gridArea: "stack", ...styles }}>
             <DesignTools
-              {...design}
+              design={design}
               mazeData={mazeState}
               setMazeData={setMazeData}
             />
@@ -47,7 +47,7 @@ export default function Toolbar({
       >
         {(styles) => (
           <div style={{ gridArea: "stack", ...styles }}>
-            <SimulationTools {...simulation} />
+            <SimulationTools simulation={simulation} />
           </div>
         )}
       </Transition>

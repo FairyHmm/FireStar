@@ -3,24 +3,22 @@ import AlgorithmPicker from "./AlgorithmPicker";
 import PlaybackControls from "./PlaybackControls";
 import SpeedSlider from "./SpeedSlider";
 
-export default function SimulationTools({
-  algoKey,
-  setAlgoKey,
-  isPlaying,
-  togglePlay,
-  reset,
-  speed,
-  setSpeed,
-}) {
+export default function SimulationTools({ simulation }) {
   return (
     <Group justify="space-between">
-      <AlgorithmPicker algo={algoKey} setAlgo={setAlgoKey} />
-      <PlaybackControls
-        isPlaying={isPlaying}
-        onPlayPause={togglePlay}
-        onReset={reset}
+      <AlgorithmPicker
+        algo={simulation.algoKey}
+        setAlgo={simulation.setAlgoKey}
       />
-      <SpeedSlider speed={speed} setSpeed={setSpeed} />
+      <PlaybackControls
+        isPlaying={simulation.isPlaying}
+        onPlayPause={simulation.togglePlay}
+        onReset={simulation.reset}
+      />
+      <SpeedSlider
+        speed={simulation.speed}
+        setSpeed={simulation.setSpeed}
+      />
     </Group>
   );
 }
