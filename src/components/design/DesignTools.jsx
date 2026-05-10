@@ -10,7 +10,7 @@ export default function DesignTools({
   handleGenerate, handleReset
 }) {
   return (
-    <Group gap="sm">
+    <Group justify="space-between">
       <MazeSizeInput
         w={mazeData.w}
         setW={(w) => setMazeData(prev => ({...prev, w}))}

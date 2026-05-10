@@ -7,10 +7,10 @@ export default function MazeSizeInput({ w, setW, h, setH }) {
   ];
 
   return (
-    <Stack gap={2}>
+    <Stack gap={"8"}>
       {inputs.map(({ label, value, onChange }) => (
         <Group gap="xs" key={label}>
-          <Text size="xs" fw={700} c="dimmed" w={15}>
+          <Text fw={700} c="var(--color-text-muted)" w={15}>
             {label}:
           </Text>
           <NumberInput
@@ -19,7 +19,19 @@ export default function MazeSizeInput({ w, setW, h, setH }) {
             min={5}
             max={100}
             w={80}
-            size="xs"
+            stepHoldDelay={500}
+            stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
+            variant="filled"
+            fw={900}
+            styles={{
+              input: {
+                color: "var(--color-text)",
+                backgroundColor: "var(--color-primary)",
+              },
+              control: {
+                backgroundColor: "transparent"
+              },
+            }}
           />
         </Group>
       ))}
