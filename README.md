@@ -1,16 +1,92 @@
+<p align="center">
+  <img width="256" src="./public/FireStar.svg" alt="FireStar logo">
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL-blue" alt="License"></a>
+  <a href="#"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Live%20Demo-🌐-orange" alt="Live Demo"></a>
+</p>
+
+# FireStar
+
+A maze-solving visualisation, featuring dynamic fire spread simulation and pathfinding algorithms.
+
+<!-- ![Algorithm in action](./public/demo.gif) -->
+
+## Overview
+
+FireStar is a pathfinding visualiser that simulates navigation through a hostile, changing environment. Unlike static maze solvers, FireStar introduces a **turn-based fire spread** mechanic that forces the agent to find the most efficient path before flames consume the path ahead.  
+
+## Features
+
+- Interactive maze design & generation
+- Real-time fire spread simulation
+- A* and BFS pathfinding
+- WebGL-accelerated rendering with pan & zoom
+- Adjustable simulation parameters & playback controls
+- Responsive and intuitive UI
+
+## Algorithms
+
+- **[Breadth-First Search](https://en.wikipedia.org/wiki/Breadth-first_search)**: Explores all neighbor nodes at the current depth before moving to the next depth level.  
+- **[A\* Search](https://en.wikipedia.org/wiki/A*_search_algorithm)**: Uses heuristics to prioritize promising paths while considering spreading fire.  
+- **Cellular Automata Fire**: Fire spreads based on neighboring cells, dynamically blocking paths.
+
+## Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | React 19 |
+| **UI Components** | Mantine 9 |
+| **Graphics Engine** | PixiJS 8 |
+| **Build Tool** | Vite 8 |
+| **Package Manager** | pnpm |
+
 ## Getting Started
 
-Install dependencies:
+### Prerequisites & Dependencies
+
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/) 9+
+
+### 1. Clone the repository
+
 ```bash
-pnpm i
+git clone https://github.com/FairyHmm/FireStar
+cd FireStar
 ```
 
-Start the development server:
+### 2. Install dependencies
+```bash
+pnpm install
+```
+
+### 3. Launch development server
+
 ```bash
 pnpm run dev
 ```
 
-Build for production:
+### 4. Build for production
+
 ```bash
 pnpm run build
 ```
+
+## Known Limitations
+
+- Larger mazes may reduce performance.
+- Current grids do not support variable weights.
+
+## Future Improvements
+
+- [ ] Implementation of [idDFS](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search), [Beam](https://en.wikipedia.org/wiki/Beam_search), and [Jump point](https://en.wikipedia.org/wiki/Jump_point_search) search.
+- [ ] Implementation of [Bidirectional](https://en.wikipedia.org/wiki/Bidirectional_search) search.
+- [ ] Customisable fire spread patterns.
+- [ ] Support for terrain types to create variable weights.
+- [ ] Performance benchmarking suite.
+
+## License
+
+This project is licensed under [AGPL-3.0-only](LICENSE).
