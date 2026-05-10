@@ -13,9 +13,9 @@ export default function DesignTools({
     <Group justify="space-between">
       <MazeSizeInput
         w={mazeData.w}
-        setW={(w) => setMazeData(prev => ({...prev, w}))}
+        setW={(w) => setMazeData({ w })}
         h={mazeData.h}
-        setH={(h) => setMazeData(prev => ({...prev, h}))}
+        setH={(h) => setMazeData({ h })}
       />
       <MazeGeneration
         algo={genAlgoKey}

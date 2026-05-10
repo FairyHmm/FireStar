@@ -19,6 +19,7 @@ export default function MazeSizeInput({ w, setW, h, setH }) {
             min={5}
             max={100}
             w={80}
+            step={2}
             stepHoldDelay={500}
             stepHoldInterval={(t) => Math.max(1000 / t ** 2, 25)}
             variant="filled"
