@@ -4,9 +4,13 @@ import PlaybackControls from "./PlaybackControls";
 import SpeedSlider from "./SpeedSlider";
 
 export default function SimulationTools({
-  algoKey, setAlgoKey,
-  isPlaying, togglePlay, resetSim,
-  speed, setSpeed
+  algoKey,
+  setAlgoKey,
+  isPlaying,
+  togglePlay,
+  reset,
+  speed,
+  setSpeed,
 }) {
   return (
     <Group justify="space-between">
@@ -14,7 +18,7 @@ export default function SimulationTools({
       <PlaybackControls
         isPlaying={isPlaying}
         onPlayPause={togglePlay}
-        onReset={resetSim}
+        onReset={reset}
       />
       <SpeedSlider speed={speed} setSpeed={setSpeed} />
     </Group>

@@ -1,54 +1,43 @@
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
 import { ALGORITHMS } from "../utils/solver/index";
 
-export const useSimulation = ({ mazeData, setMazeData }) => {
-  // --- SIMULATION STATE ---
+export const useSimulation = ({ maze }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(100);
+
   const planRef = useRef(null);
+  const tickRef = useRef(0);
 
   const algoFn = useMemo(() => {
     const config = ALGORITHMS[algoKey];
     return config?.fn || null;
   }, [algoKey]);
 
-  // --- LOGIC: Initialise (Calculate Plan) ---
+  // --- LOGIC: Prepare simulation plan ---
   const preparePlan = useCallback(() => {
     try {
-      const { grid, w, h } = mazeData;
-      const plan = initializeSimulation(grid, w, h, algoFn);
+      const { grid, w, h } = maze.state;
+      const plan = initialiseSimulation(grid, w, h, algoFn);
       planRef.current = plan;
+
+      // Tell maze to save its current state so we can revert later
+      maze.actions.saveGrid();
       return true;
     } catch (error) {
       alert(error.message);
       return false;
     }
-  }, [mazeData, algoFn]);
-
-  // --- LOGIC: Handle Reset ---
-  const handleReset = useCallback(() => {
-    if (planRef.current) {
-      setMazeData((prev) => ({
-        ...prev,
-        grid: new Uint8Array(planRef.current.originalGrid),
-      }));
-      planRef.current = null;
-    }
-  }, [setMazeData]);
+  }, [maze, algoFn]);
 
   // --- LOGIC: Calculate Grid at specific Tick ---
   const handleTick = useCallback(
     (tick) => {
-      // If no plan, initialise on first tick
-      if (tick === 0 && !planRef.current) {
-        const success = preparePlan();
-        if (!success) return;
-      }
-
       if (!planRef.current) return;
 
-      const { w, h } = mazeData;
+      const { w, h } = maze.state;
       const { originalGrid, fireTime, path } = planRef.current;
 
       const nextGrid = calculateGridAtTick(
@@ -60,15 +49,59 @@ export const useSimulation = ({ mazeData, setMazeData }) => {
         h,
       );
 
-      setMazeData((prev) => ({ ...prev, grid: nextGrid }));
+      maze.actions.updateGrid(nextGrid);
     },
-    [mazeData, preparePlan, setMazeData],
+    [maze],
   );
+
+  // --- PLAYBACK CONTROLS ---
+  const play = useCallback(() => {
+    // If no plan exists, initialize it on play
+    if (!planRef.current) {
+      const success = preparePlan();
+      if (!success) return;
+    }
+    setIsPlaying(true);
+  }, [preparePlan]);
+
+  const pause = useCallback(() => {
+    setIsPlaying(false);
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    isPlaying ? pause() : play();
+  }, [isPlaying, play, pause]);
+
+  const reset = useCallback(() => {
+    setIsPlaying(false);
+    tickRef.current = 0;
+
+    if (planRef.current) {
+      // Revert maze to state before simulation started
+      maze.actions.revertGrid();
+      planRef.current = null;
+    }
+  }, [maze]);
+
+  // --- TIMER LOOP ---
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const id = setInterval(() => {
+      tickRef.current++;
+      handleTick(tickRef.current);
+    }, speed);
+
+    return () => clearInterval(id);
+  }, [isPlaying, speed, handleTick]);
 
   return {
     algoKey,
     setAlgoKey,
-    handleTick,
-    handleReset,
+    isPlaying,
+    speed,
+    setSpeed,
+    togglePlay,
+    reset,
   };
 };

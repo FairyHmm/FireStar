@@ -4,10 +4,14 @@ import MapPalette from "./MapPalette";
 import MazeGeneration from "./MazeGeneration";
 
 export default function DesignTools({
-  activeTool, setActiveTool,
-  mazeData, setMazeData,
-  genAlgoKey, setGenAlgoKey,
-  handleGenerate, handleReset
+  activeTool,
+  setActiveTool,
+  mazeData,
+  setMazeData,
+  genAlgoKey,
+  setGenAlgoKey,
+  handleGenerate,
+  handleReset,
 }) {
   return (
     <Group justify="space-between">
