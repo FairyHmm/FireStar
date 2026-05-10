@@ -3,7 +3,7 @@ export const attachDrawListener = (
   viewport,
   toolRef,
   stateRef,
-  setMazeData,
+  updateGrid,
 ) => {
   const isDrawingRef = { current: false };
 
@@ -52,7 +52,7 @@ export const attachDrawListener = (
       newGrid[index] = CELL.TILE;
     }
 
-    setMazeData((prev) => ({ ...prev, grid: newGrid }));
+    updateGrid(newGrid);
   };
 
   // --- EVENT HANDLERS ---

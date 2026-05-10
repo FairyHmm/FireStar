@@ -10,7 +10,7 @@ import { attachDrawListener, attachHoverListener } from "../pixi/events";
 
 export const useCanvas = ({
   mazeData,
-  setMazeData,
+  updateGrid,
   activeTool,
   isReadOnly,
 }) => {
@@ -47,7 +47,7 @@ export const useCanvas = ({
         instances.viewport,
         toolRef,
         stateRef,
-        setMazeData,
+        updateGrid,
       );
 
       // Attach Hover Highlight
@@ -77,7 +77,7 @@ export const useCanvas = ({
       if (instancesRef.current) instancesRef.current.destroy();
       if (containerRef.current) containerRef.current.innerHTML = "";
     };
-  }, [setMazeData]);
+  }, [updateGrid]);
 
   // --- 3. RE-RENDER ON DATA CHANGE ---
   useEffect(() => {

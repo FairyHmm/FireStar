@@ -91,7 +91,7 @@ export default function ModeManager() {
 
           <Canvas
             mazeData={maze.state}
-            setMazeData={maze.actions.setGrid}
+            updateGrid={maze.actions.updateGrid}
             activeTool={mode === "design" ? designData.activeTool : null}
             isReadOnly={mode === "simulation"}
           />
