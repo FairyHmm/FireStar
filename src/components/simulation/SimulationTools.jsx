@@ -9,7 +9,7 @@ export default function SimulationTools({
   speed, setSpeed
 }) {
   return (
-    <Group gap="sm">
+    <Group justify="space-between">
       <AlgorithmPicker algo={algoKey} setAlgo={setAlgoKey} />
       <PlaybackControls
         isPlaying={isPlaying}

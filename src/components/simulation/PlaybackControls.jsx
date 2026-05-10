@@ -1,19 +1,25 @@
-import { Button, Group } from "@mantine/core";
+import { Button } from "@mantine/core";
 
 export default function SimControls({ isPlaying, onPlayPause, onReset }) {
   return (
-    <Group justify="center" my="md">
-      <Button.Group>
-        <Button
-          color={isPlaying ? "orange" : "teal"}
-          onClick={onPlayPause}
-          style={{ width: 120 }}
-        >
-          {isPlaying ? "⏸️ Pause" : "▶️ Run"}
-        </Button>
+    <Button.Group>
+      <Button
+        color={
+          isPlaying ? "var(--color-warning-bg)" : "var(--color-success-bg)"
+        }
+        onClick={onPlayPause}
+        style={{ width: 120, transition: "all 0.2s ease" }}
+      >
+        {isPlaying ? "⏸️ Pause" : "▶️ Run"}
+      </Button>
 
-        <Button onClick={onReset}>🔄 Reset</Button>
-      </Button.Group>
-    </Group>
+      <Button
+        color="var(--color-incomplete-bg)"
+        onClick={onReset}
+        style={{ width: 120, transition: "all 0.2s ease" }}
+      >
+        🔄 Reset
+      </Button>
+    </Button.Group>
   );
 }

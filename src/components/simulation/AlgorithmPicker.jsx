@@ -1,18 +1,17 @@
 import { Menu, Button, Stack, Text } from "@mantine/core";
 import { ALGORITHMS } from "../../utils/solver/index";
 
-export default function AlgorithmPicker({ algoKey, setAlgoKey }) {
-  // Map the registry object to an array for rendering
+export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
   const algoList = Object.values(ALGORITHMS);
 
-  // Find label of currently selected function
-  const currentConfig = algoList.find((i) => i.value === algoKey) || ALGORITHMS.bfs;
+  const currentConfig =
+    algoList.find((i) => i.value === algoKey) || ALGORITHMS.bfs;
 
   return (
     <Stack gap={4} w={220}>
       <Text
         size="xs"
-        c="dimmed"
+        c="var(--color-text-muted)"
         fw={600}
         style={{ textTransform: "uppercase" }}
       >
@@ -25,34 +24,53 @@ export default function AlgorithmPicker({ algoKey, setAlgoKey }) {
           duration: 200,
           exitDuration: 500,
         }}
-        position="bottom-end"
+        position="bottom-start"
         withinPortal
+        styles={{
+          dropdown: {
+            backgroundColor: "var(--color-fg)",
+          },
+        }}
       >
         <Menu.Target>
           <Button
-            variant="default"
             size="sm"
             justify="space-between"
             fullWidth
+            color="var(--color-ac)"
             rightSection={<Text size="xs">▼</Text>}
+            style={{ transition: "all 0.2s ease" }}
           >
             {currentConfig.label}
           </Button>
         </Menu.Target>
 
         <Menu.Dropdown>
-          {algoList.map((item, index) => (
+          <Menu.Label c="var(--color-text)">Thuật toán</Menu.Label>
+          {algoList.map((item) => (
             <Menu.Item
-              key={index}
+              key={item.value}
               disabled={item.disabled}
-              onClick={() => setAlgo(item.value)}
+              onClick={() => setAlgoKey(item.value)}
               styles={{
                 item: {
-                  fontWeight: item.fn === algoKey ? 600 : 400,
+                  fontWeight: item.value === algoKey ? 600 : 400,
                   backgroundColor:
-                    item.fn === algoKey ? "var(--primary)" : "",
+                    item.value === algoKey ? "var(--color-primary)" : "",
+                  transition: "background-color 0.3s",
+                  "&:hover": {
+                    backgroundColor:
+                      item.value === algoKey
+                        ? "var(--color-primary)"
+                        : "var(--color-primary-muted)",
+                  },
                 },
               }}
+              color={
+                item.value === algoKey
+                  ? "var(--color-primary-muted)"
+                  : "var(--color-ac)"
+              }
             >
               {item.label}
             </Menu.Item>

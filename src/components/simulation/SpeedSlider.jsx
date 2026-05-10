@@ -1,25 +1,24 @@
 import { Box, Text, Slider, Group } from "@mantine/core";
-import sClasses from "../../styles/mantine/slider.module.css";
 
 export default function SpeedSlider({ speed, setSpeed }) {
   const getSpeedColor = () => {
     if (speed < 180)
-      return "var(--color-success)";
+      return "success";
     if (speed < 350)
-      return "var(--color-warning)";
-    return "var(--color-danger)";
+      return "warning";
+    return "danger";
   };
 
   return (
     <Box w={180} ml="md">
       <Group justify="space-between" mb={4}>
-        <Text size="xs" fw={700} c="var(--color-text-muted)" lts={0.5} >
+        <Text size="xs" fw={700} c="var(--color-text-muted)" lts={0.5}>
           Tốc độ
         </Text>
         <Text
           size="xs"
           fw={700}
-          c={getSpeedColor()}
+          c={`var(--color-${getSpeedColor()}`}
           style={{ transition: ".3s" }}
         >
           {speed}ms
@@ -34,14 +33,23 @@ export default function SpeedSlider({ speed, setSpeed }) {
         max={500}
         step={10}
         size="sm"
-        color={getSpeedColor()}
+        color={`var(--color-${getSpeedColor()}-bg`}
         label={null}
         marks={[{ value: 10 }, { value: 180 }, { value: 350 }, { value: 500 }]}
-        classNames={{
-          root: sClasses["slider-root"],
-          track: sClasses["slider-track"],
-          bar: sClasses["slider-bar"],
-          thumb: sClasses["slider-thumb"],
+        styles={{
+          root: {
+            transition: "all 0.3s ease",
+          },
+          track: {
+            "--track-bg": "var(--color-ac)",
+          },
+          bar: {
+            transition: "background-color 0.2s ease",
+          },
+          thumb: {
+            borderWidth: "2px",
+            transition: "color 0.2s ease",
+          },
         }}
       />
 
