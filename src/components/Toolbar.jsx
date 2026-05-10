@@ -1,11 +1,22 @@
-import { Transition } from "@mantine/core";
-import classes from "../styles/components/toolbar.module.css";
+import { SimpleGrid, Transition } from "@mantine/core";
 import DesignTools from "./design/DesignTools";
 import SimulationTools from "./simulation/SimulationTools";
 
 export default function Toolbar({ mode, designProps, simulationProps }) {
   return (
-    <div className={classes.toolbar}>
+    <SimpleGrid
+      cols={1}
+      style={{
+        display: "grid",
+        gridTemplateAreas: `"stack"`,
+        backgroundColor: "var(--color-fg)",
+        borderRadius: "8px",
+        padding: "1rem",
+        overflow: "hidden",
+        minHeight: "112px",
+        alignItems: "center",
+      }}
+    >
       <Transition
         mounted={mode === "design"}
         transition="fade-right"
@@ -13,7 +24,7 @@ export default function Toolbar({ mode, designProps, simulationProps }) {
         timingFunction="ease"
       >
         {(styles) => (
-          <div style={styles} className={classes.panel}>
+          <div style={{ gridArea: "stack", ...styles }}>
             <DesignTools {...designProps} />
           </div>
         )}
@@ -26,11 +37,11 @@ export default function Toolbar({ mode, designProps, simulationProps }) {
         timingFunction="ease"
       >
         {(styles) => (
-          <div style={styles} className={classes.panel}>
+          <div style={{ gridArea: "stack", ...styles }}>
             <SimulationTools {...simulationProps} />
           </div>
         )}
       </Transition>
-    </div>
+    </SimpleGrid>
   );
 }
