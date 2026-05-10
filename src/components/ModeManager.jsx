@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { AppShell, Group, SegmentedControl, Stack } from "@mantine/core";
+import { AppShell, Stack } from "@mantine/core";
+import ModeSwitcher from "./ModeSwitcher";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
 import { useDesign } from "../hooks/useDesign";
@@ -23,20 +24,7 @@ export default function ModeManager() {
     <AppShell padding="xl" styles={{ main: { background: "var(--color-bg)" } }}>
       <AppShell.Main>
         <Stack gap="xl">
-          <Group justify="flex-end">
-            <SegmentedControl
-              value={mode}
-              onChange={handleModeChange}
-              data={[
-                { label: "Xây dựng", value: "design" },
-                { label: "Mô phỏng", value: "simulation" },
-              ]}
-              styles={{
-                root: { backgroundColor: "var(--color-fg)" },
-                indicator: { backgroundColor: "var(--color-primary)" },
-              }}
-            />
-          </Group>
+          <ModeSwitcher mode={mode} onModeChange={handleModeChange} />
 
           <Toolbar
             mode={mode}
