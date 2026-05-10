@@ -1,31 +1,25 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ALGORITHMS } from "../utils/generator/index";
 
-export const useDesign = ({ mazeData, setMazeData }) => {
-const [activeTool, setActiveTool] = useState("wall");
+export const useDesign = ({ mazeData, updateGrid }) => {
+  const [activeTool, setActiveTool] = useState("wall");
   const [genAlgoKey, setGenAlgoKey] = useState("dfs");
 
-  // Helper to update grid while ensuring odd dimensions
-  const updateMaze = useCallback((w, h, gridFactory) => {
-    const width = w | 1;
-    const height = h | 1;
-    setMazeData({
-      w: width,
-      h: height,
-      grid: gridFactory(width, height)
-    });
-  }, [setMazeData]);
+  // Track state to prevent infinite loops from the updateGrid/updateGrid calls
+  const lastState = useRef({ w: 0, h: 0, algo: "" });
 
   const handleGenerate = useCallback(() => {
     const algo = ALGORITHMS[genAlgoKey]?.fn;
     if (!algo) return alert("Algorithm not found");
 
-    updateMaze(mazeData.w, mazeData.h, (w, h) => algo(h, w));
-  }, [genAlgoKey, mazeData.w, mazeData.h, updateMaze]);
+    const newGrid = algo(mazeData.h, mazeData.w);
+    updateGrid(newGrid);
+  }, [genAlgoKey, mazeData.w, mazeData.h, updateGrid]);
 
-  const handleReset = useCallback(() => {
-    updateMaze(mazeData.w, mazeData.h, (w, h) => new Uint8Array(w * h));
-  }, [mazeData.w, mazeData.h, updateMaze]);
+  // --- AUTOMATIC REGENERATION ---
+  useEffect(() => {
+    handleGenerate();
+  }, [mazeData.w, mazeData.h, genAlgoKey, handleGenerate]);
 
   return {
     activeTool,
@@ -33,6 +27,5 @@ const [activeTool, setActiveTool] = useState("wall");
     genAlgoKey,
     setGenAlgoKey,
     handleGenerate,
-    handleReset,
   };
 };

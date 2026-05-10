@@ -15,7 +15,7 @@ export default function ModeManager() {
 
   const designData = useDesign({
     mazeData: maze.state,
-    setMazeData: maze.actions.setGrid,
+    updateGrid: maze.actions.updateGrid,
   });
 
   const simulationData = useSimulation({
