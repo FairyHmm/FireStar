@@ -1,10 +1,17 @@
+import { useState, useEffect } from "react";
 import { Box, Text, Slider, Group } from "@mantine/core";
 
 export default function SpeedSlider({ speed, setSpeed }) {
+  const [localSpeed, setLocalSpeed] = useState(speed);
+
+  useEffect(() => {
+    setLocalSpeed(speed);
+  }, [speed]);
+
   const getSpeedColor = () => {
-    if (speed < 180)
+    if (localSpeed < 180)
       return "success";
-    if (speed < 350)
+    if (localSpeed < 350)
       return "warning";
     return "danger";
   };
@@ -18,22 +25,23 @@ export default function SpeedSlider({ speed, setSpeed }) {
         <Text
           size="xs"
           fw={700}
-          c={`var(--color-${getSpeedColor()}`}
+          c={`var(--color-${getSpeedColor()})`}
           style={{ transition: ".3s" }}
         >
-          {speed}ms
+          {localSpeed}ms
         </Text>
       </Group>
 
       <Slider
-        value={speed}
-        onChange={setSpeed}
+        value={localSpeed}
+        onChange={setLocalSpeed}
+        onChangeEnd={setSpeed}
         domain={[0, 500]}
         min={10}
         max={500}
         step={10}
         size="sm"
-        color={`var(--color-${getSpeedColor()}-bg`}
+        color={`var(--color-${getSpeedColor()}-bg)`}
         label={null}
         marks={[{ value: 10 }, { value: 180 }, { value: 350 }, { value: 500 }]}
         styles={{
