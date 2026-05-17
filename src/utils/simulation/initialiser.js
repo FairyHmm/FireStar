@@ -1,7 +1,7 @@
 import { CELL } from "../constants";
 import { bfsFireSpread } from "../bfsFireSpread";
 
-export const initialiseSimulation = (grid, w, h, algoFn) => {
+export const initialiseSimulation = (grid, w, h, algoFn, fireSpeed) => {
   const size = w * h;
   const fireStarts = [];
   let personStart = -1;
@@ -16,12 +16,20 @@ export const initialiseSimulation = (grid, w, h, algoFn) => {
     throw new Error("Sếp quên đặt nhân vật vào map rồi!");
   }
 
-  // 2. Run Algorithms
-  const fireTime = bfsFireSpread(grid, h, w, fireStarts);
+    // 2. Run Algorithms
+  const rawFireDistance = bfsFireSpread(grid, h, w, fireStarts);
+  const absoluteFireTime = new Float32Array(rawFireDistance.length);
+  for (let i = 0; i < rawFireDistance.length; i++) {
+    if (rawFireDistance[i] >= 2e9) {
+      absoluteFireTime[i] = 2e9; 
+    } else {
+      absoluteFireTime[i] = rawFireDistance[i] / fireSpeed;
+    }
+  }
 
   let path = null;
   if (algoFn && typeof algoFn === 'function') {
-    path = algoFn(grid, h, w, personStart, fireTime);
+    path = algoFn(grid, h, w, personStart, absoluteFireTime);
   } else {
     // Should not happen if UI is correct, but good safety net
     throw new Error("Thuật toán này chưa có sẵn.");
@@ -30,7 +38,7 @@ export const initialiseSimulation = (grid, w, h, algoFn) => {
   // 3. Return the "Plan"
   return {
     originalGrid: new Uint8Array(grid),
-    fireTime,
+    fireTime: absoluteFireTime,
     path
   };
 };
