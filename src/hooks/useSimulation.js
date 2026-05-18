@@ -2,11 +2,12 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
 import { ALGORITHMS } from "../utils/solver/index";
+const FIRE_RATE = 1.0;
 
 export const useSimulation = ({ maze }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(100);
+  const [speed, setSpeed] = useState(1);
 
   const planRef = useRef(null);
   const tickRef = useRef(0);
@@ -20,7 +21,7 @@ export const useSimulation = ({ maze }) => {
   const preparePlan = useCallback(() => {
     try {
       const { grid, w, h } = maze.state;
-      const plan = initialiseSimulation(grid, w, h, algoFn);
+      const plan = initialiseSimulation(grid, w, h, algoFn, FIRE_RATE);
       planRef.current = plan;
 
       // Tell maze to save its current state so we can revert later
@@ -38,15 +39,12 @@ export const useSimulation = ({ maze }) => {
       if (!planRef.current) return;
 
       const { w, h } = maze.state;
-      const { originalGrid, fireTime, path } = planRef.current;
-
+      
       const nextGrid = calculateGridAtTick(
-        originalGrid,
-        fireTime,
-        path,
+        planRef.current,
         tick,
         w,
-        h,
+        h
       );
 
       maze.actions.updateGrid(nextGrid);
@@ -90,7 +88,7 @@ export const useSimulation = ({ maze }) => {
     const id = setInterval(() => {
       tickRef.current++;
       handleTick(tickRef.current);
-    }, speed);
+    }, 50);
 
     return () => clearInterval(id);
   }, [isPlaying, speed, handleTick]);

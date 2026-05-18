@@ -9,9 +9,9 @@ export default function SpeedSlider({ speed, setSpeed }) {
   }, [speed]);
 
   const getSpeedColor = () => {
-    if (localSpeed < 180)
+    if (localSpeed < 1)
       return "success";
-    if (localSpeed < 350)
+    if (localSpeed < 2)
       return "warning";
     return "danger";
   };
@@ -20,7 +20,7 @@ export default function SpeedSlider({ speed, setSpeed }) {
     <Box w={180} ml="md">
       <Group justify="space-between" mb={4}>
         <Text size="xs" fw={700} c="var(--color-text-muted)" lts={0.5}>
-          Tốc độ
+          Tốc độ lửa lan
         </Text>
         <Text
           size="xs"
@@ -28,7 +28,7 @@ export default function SpeedSlider({ speed, setSpeed }) {
           c={`var(--color-${getSpeedColor()})`}
           style={{ transition: ".3s" }}
         >
-          {localSpeed}ms
+          x{localSpeed}
         </Text>
       </Group>
 
@@ -36,14 +36,13 @@ export default function SpeedSlider({ speed, setSpeed }) {
         value={localSpeed}
         onChange={setLocalSpeed}
         onChangeEnd={setSpeed}
-        domain={[0, 500]}
-        min={10}
-        max={500}
-        step={10}
+        min={0.2}
+        max={3}
+        step={0.2}
         size="sm"
         color={`var(--color-${getSpeedColor()}-bg)`}
         label={null}
-        marks={[{ value: 10 }, { value: 180 }, { value: 350 }, { value: 500 }]}
+        marks={[{ value: 0.2 }, { value: 1 }, { value: 2 }, { value: 3 }]}
         styles={{
           root: {
             transition: "all 0.3s ease",

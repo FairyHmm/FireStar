@@ -1,7 +1,7 @@
 import { CELL } from "../constants";
 import { bfsFireSpread } from "../bfsFireSpread";
 
-export const initialiseSimulation = (grid, w, h, algoFn, fireSpeed) => {
+export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
   const size = w * h;
   const fireStarts = [];
   let personStart = -1;
@@ -16,29 +16,24 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireSpeed) => {
     throw new Error("Sếp quên đặt nhân vật vào map rồi!");
   }
 
-    // 2. Run Algorithms
-  const rawFireDistance = bfsFireSpread(grid, h, w, fireStarts);
-  const absoluteFireTime = new Float32Array(rawFireDistance.length);
-  for (let i = 0; i < rawFireDistance.length; i++) {
-    if (rawFireDistance[i] >= 2e9) {
-      absoluteFireTime[i] = 2e9; 
-    } else {
-      absoluteFireTime[i] = rawFireDistance[i] / fireSpeed;
-    }
-  }
+  // 1. Tính lưới khoảng cách lửa nguyên thủy (Chưa xét fireRate)
+  const FireDistance = bfsFireSpread(grid, h, w, fireStarts);
 
-  let path = null;
+  // 2. Chạy Thuật toán
+  let result = null;
   if (algoFn && typeof algoFn === 'function') {
-    path = algoFn(grid, h, w, personStart, absoluteFireTime);
+    result = algoFn(grid, h, w, personStart, FireDistance, fireRate);
   } else {
-    // Should not happen if UI is correct, but good safety net
     throw new Error("Thuật toán này chưa có sẵn.");
   }
 
   // 3. Return the "Plan"
   return {
     originalGrid: new Uint8Array(grid),
-    fireTime: absoluteFireTime,
-    path
+    FireDistance,
+    visitedNodesInOrder: result.visitedNodesInOrder,
+    path: result.path,
+    personStart,
+    fireRate
   };
 };
