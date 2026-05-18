@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
 import { ALGORITHMS } from "../utils/solver/index";
-const FIRE_RATE = 1.0;
 
 export const useSimulation = ({ maze }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
@@ -21,7 +20,7 @@ export const useSimulation = ({ maze }) => {
   const preparePlan = useCallback(() => {
     try {
       const { grid, w, h } = maze.state;
-      const plan = initialiseSimulation(grid, w, h, algoFn, FIRE_RATE);
+      const plan = initialiseSimulation(grid, w, h, algoFn, speed);
       planRef.current = plan;
 
       // Tell maze to save its current state so we can revert later

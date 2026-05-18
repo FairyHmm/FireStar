@@ -48,7 +48,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
       if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
       const next = nr * cols + nc;
 
-      if (grid[next] === CELL.WALL) continue;
+      if (grid[next] & CELL.WALL) continue;
 
       const humanTime = currentDist + 1;
       const fireArrival = fireDistance[next] / fireRate;

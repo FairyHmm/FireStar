@@ -13,7 +13,7 @@ const dc = [0, 0, -1, +1];
 
 export function bfsFireSpread(grid, rows, cols, fireStarts) {
   const size = rows * cols;
-  const fireTime = new Int32Array(size).fill(Infinity);
+  const fireTime = new Int32Array(size).fill(2e9);
   const queue = [];
   let head = 0;
   for (let i = 0; i < fireStarts.length; i++) {
@@ -29,10 +29,12 @@ export function bfsFireSpread(grid, rows, cols, fireStarts) {
       const nr = r + dr[i];
       const nc = c + dc[i];
       if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+
       const next = nr * cols + nc;
-      const isPassableForFire =
-        grid[next] === CELL.TILE || grid[next] === CELL.PERSON;
-      if (isPassableForFire && fireTime[next] === Infinity) {
+
+      const isPassableForFire = !(grid[next] & CELL.WALL);
+
+      if (isPassableForFire && fireTime[next] === 2e9) {
         fireTime[next] = fireTime[cur] + 1;
         queue.push(next);
       }

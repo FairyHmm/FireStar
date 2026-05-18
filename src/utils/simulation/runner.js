@@ -4,31 +4,32 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
   const { originalGrid, fireDistance, visitedNodesInOrder, path, personStart, fireRate } = plan;
   const newGrid = new Uint8Array(originalGrid);
 
-  let simTime = 0; // Thời gian ảo (độ dài đường đi) 
+  let simTime = 0; // Thời gian ảo (để tính lửa lan)
 
-  // GIAI ĐOẠN 1: Diễn họa thuật toán tìm kiếm (Máy tính đang suy nghĩ)
+  // GIAI ĐOẠN 1: Máy tính đang "suy nghĩ" thuật toán
   if (tick < visitedNodesInOrder.length) {
-    simTime = visitedNodesInOrder[tick].d; 
+    // Trong lúc thuật toán đang quét, thời gian thực chưa trôi qua, lửa đóng băng!
+    simTime = 0; 
 
-    // Vẽ vùng Explored thuật toán vừa chạm tới
+    // Vẽ vùng Explored (màu xanh)
     for (let i = 0; i <= tick; i++) {
       newGrid[visitedNodesInOrder[i].idx] |= CELL.EXPLORED;
     }
-    // Giữ người ở nguyên vị trí xuất phát
     newGrid[personStart] |= CELL.PERSON; 
   } 
-  // GIAI ĐOẠN 2: Diễn họa bước chạy thoát hiểm thực tế
+  // GIAI ĐOẠN 2: Thời gian thực bắt đầu trôi, người chạy và lửa lan
   else {
-    // Luôn vẽ full vùng Explored
+    // Giữ nguyên toàn bộ vùng Explored của AI
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       newGrid[visitedNodesInOrder[i].idx] |= CELL.EXPLORED;
     }
 
+    // Thời gian chạy thực tế bắt đầu đếm từ 0 sau khi Giai đoạn 1 kết thúc
+    const runTick = tick - visitedNodesInOrder.length;
+    simTime = runTick; // Thời gian liên tục tăng vô tận
+
     if (path && path.length > 0) {
-      const pathTick = tick - visitedNodesInOrder.length;
-      const pathIndex = Math.min(pathTick, path.length - 1);
-      
-      simTime = pathIndex; // Thời gian ảo lúc này là số bước chân thật sự trên đường thoát
+      const pathIndex = Math.min(runTick, path.length - 1);
 
       // Vẽ tia sáng con đường
       for (let i = 0; i <= pathIndex; i++) {
@@ -37,17 +38,16 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
       // Dịch chuyển nhân vật
       newGrid[path[pathIndex]] |= CELL.PERSON;
     } else {
-      // Trường hợp không tìm thấy đường thoát (Chết cháy)
-      simTime = visitedNodesInOrder.length > 0 ? visitedNodesInOrder[visitedNodesInOrder.length - 1].d : 0;
+      // Trường hợp không tìm thấy đường thoát, người đứng yên 
+      // Nhưng thời gian simTime vẫn tăng, khiến lửa tiếp tục nuốt chửng bản đồ
       newGrid[personStart] |= CELL.PERSON;
     }
   }
 
-  // --- LOGIC LỬA LAN BÁM THEO SIM-TIME NHƯ BẠN MÔ TẢ ---
+  // --- LOGIC LỬA LAN ---
   for (let i = 0; i < newGrid.length; i++) {
-    // Độ dài đường đi * tốc độ lửa => số ô lửa lan được
+    // Lửa bám theo simTime, lan mượt mà và không bao giờ bị "giật lùi" nữa
     if (fireDistance[i] <= simTime * fireRate) {
-      // Lửa cháy đè lên mọi thứ
       newGrid[i] |= CELL.FIRE_CURRENT;
     }
   }

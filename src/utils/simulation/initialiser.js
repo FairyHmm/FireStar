@@ -17,12 +17,12 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
   }
 
   // 1. Tính lưới khoảng cách lửa nguyên thủy (Chưa xét fireRate)
-  const FireDistance = bfsFireSpread(grid, h, w, fireStarts);
+  const fireDistance = bfsFireSpread(grid, h, w, fireStarts);
 
   // 2. Chạy Thuật toán
   let result = null;
   if (algoFn && typeof algoFn === 'function') {
-    result = algoFn(grid, h, w, personStart, FireDistance, fireRate);
+    result = algoFn(grid, h, w, personStart, fireDistance, fireRate);
   } else {
     throw new Error("Thuật toán này chưa có sẵn.");
   }
@@ -30,7 +30,7 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
   // 3. Return the "Plan"
   return {
     originalGrid: new Uint8Array(grid),
-    FireDistance,
+    fireDistance,
     visitedNodesInOrder: result.visitedNodesInOrder,
     path: result.path,
     personStart,
