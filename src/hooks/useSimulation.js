@@ -16,44 +16,55 @@ export const useSimulation = ({ maze }) => {
     return config?.fn || null;
   }, [algoKey]);
 
-  // --- LOGIC: Prepare simulation plan ---
   const preparePlan = useCallback(() => {
     try {
       const { grid, w, h } = maze.state;
       const plan = initialiseSimulation(grid, w, h, algoFn, speed);
       planRef.current = plan;
 
-      // Tell maze to save its current state so we can revert later
       maze.actions.saveGrid();
       return true;
     } catch (error) {
       alert(error.message);
       return false;
     }
-  }, [maze, algoFn]);
+  }, [maze, algoFn, speed]);
 
-  // --- LOGIC: Calculate Grid at specific Tick ---
   const handleTick = useCallback(
     (tick) => {
       if (!planRef.current) return;
-
       const { w, h } = maze.state;
       
-      const nextGrid = calculateGridAtTick(
+      // Bóc tách dữ liệu trả về từ Runner
+      const { newGrid, isFinished, status, simTime } = calculateGridAtTick(
         planRef.current,
         tick,
         w,
         h
       );
 
-      maze.actions.updateGrid(nextGrid);
+      maze.actions.updateGrid(newGrid);
+
+      // NẾU MÔ PHỎNG KẾT THÚC
+      if (isFinished) {
+        setIsPlaying(false); // Dừng vòng lặp
+
+        const nodesExplored = planRef.current.visitedNodesInOrder.length;
+
+        // Dùng setTimeout 100ms để đợi trình duyệt vẽ xong nốt bước chân cuối cùng rồi mới bật Popup
+        setTimeout(() => {
+          if (status === "won") {
+            alert(`🎉 BẠN ĐÃ AN TOÀN!\n\n⏱ Thời gian thoát: ${simTime} bước\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
+          } else if (status === "lost") {
+            alert(`🔥 BẠN ĐÃ BỊ LỬA THIÊU RỤI!\n\n⏱ Thời gian cầm cự: ${simTime} bước\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
+          }
+        }, 100);
+      }
     },
     [maze],
   );
 
-  // --- PLAYBACK CONTROLS ---
   const play = useCallback(() => {
-    // If no plan exists, initialize it on play
     if (!planRef.current) {
       const success = preparePlan();
       if (!success) return;
@@ -74,13 +85,11 @@ export const useSimulation = ({ maze }) => {
     tickRef.current = 0;
 
     if (planRef.current) {
-      // Revert maze to state before simulation started
       maze.actions.revertGrid();
       planRef.current = null;
     }
   }, [maze]);
 
-  // --- TIMER LOOP ---
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -90,7 +99,7 @@ export const useSimulation = ({ maze }) => {
     }, 50);
 
     return () => clearInterval(id);
-  }, [isPlaying, speed, handleTick]);
+  }, [isPlaying, handleTick]);
 
   return {
     algoKey,
