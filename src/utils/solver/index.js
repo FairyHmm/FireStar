@@ -1,4 +1,5 @@
 import { bfsSolve } from "./bfsSolve";
+import { aStarSolve } from "./aStarSolve.js";
 
 export const ALGORITHMS = {
   bfs: {
@@ -9,9 +10,9 @@ export const ALGORITHMS = {
   },
   astar: {
     value: "astar",
-    fn: null,
-    label: "A* (Đang cập nhật...)",
-    disabled: true
+    fn: aStarSolve,
+    label: "A*",
+    disabled: false
   },
   iddfs: {
     value: "iddfs",

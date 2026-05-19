@@ -7,8 +7,8 @@ export default function SimulationTools({ simulation }) {
   return (
     <Group justify="space-between">
       <AlgorithmPicker
-        algo={simulation.algoKey}
-        setAlgo={simulation.setAlgoKey}
+        algoKey={simulation.algoKey}
+        setAlgoKey={simulation.setAlgoKey}
       />
       <PlaybackControls
         isPlaying={simulation.isPlaying}
