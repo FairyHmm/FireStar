@@ -1,50 +1,37 @@
 import { CELL } from "../constants.js";
-
-const dr = [-1, +1, 0, 0];
-const dc = [0, 0, -1, +1];
+import { DR, DC, tracePath, isSafeFromFire, isAtBoundary } from "./solverUtils.js";
 
 export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1) {
   const size = rows * cols;
   const gScore = new Int32Array(size).fill(2e9);
   const trace = new Int32Array(size).fill(-1);
-  const queue = [];
+  const queue = [startIdx];
   let head = 0;
 
   const visitedNodesInOrder = [];
-
   gScore[startIdx] = 0;
-  queue.push(startIdx);
 
   while (head < queue.length) {
     const cur = queue[head++];
     const currentDist = gScore[cur];
-
-    // Lưu lại node đang xét và khoảng cách (thời gian) để đồng bộ với lửa lan
     visitedNodesInOrder.push({ idx: cur, d: currentDist });
 
     const r = Math.floor(cur / cols);
     const c = cur % cols;
 
-    if (r === 0 || r === rows - 1 || c === 0 || c === cols - 1){
-      return {
-        visitedNodesInOrder,
-        path: tracePath(trace, startIdx, cur)
-      };
+    if (isAtBoundary(r, c, rows, cols)) {
+      return { visitedNodesInOrder, path: tracePath(trace, startIdx, cur) };
     }
-    // Điều kiện chiến thắng: đã đứng ở bất kỳ ô trống nào ở rìa của bản đồ
 
     for (let i = 0; i < 4; i++) {
-      const nr = r + dr[i];
-      const nc = c + dc[i];
+      const nr = r + DR[i], nc = c + DC[i];
       if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-      const next = nr * cols + nc;
 
+      const next = nr * cols + nc;
       if (grid[next] & CELL.WALL) continue;
 
       const humanTime = currentDist + 1;
-      const fireArrival = fireDistance[next] / fireRate;
-
-      if (gScore[next] === 2e9 && humanTime < fireArrival) {
+      if (gScore[next] === 2e9 && isSafeFromFire(humanTime, fireDistance[next], fireRate)) {
         gScore[next] = humanTime;
         trace[next] = cur;
         queue.push(next);
@@ -52,15 +39,4 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
     }
   }
   return { visitedNodesInOrder, path: null };
-}
-
-function tracePath(trace, startIdx, endIdx) {
-  const path = [];
-  let cur = endIdx;
-  while (cur !== startIdx) {
-    path.push(cur);
-    cur = trace[cur];
-  }
-  path.push(startIdx);
-  return path.reverse();
 }

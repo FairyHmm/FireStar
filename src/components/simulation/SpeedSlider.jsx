@@ -11,7 +11,7 @@ export default function SpeedSlider({ speed, setSpeed }) {
   const getSpeedColor = () => {
     if (localSpeed < 1)
       return "success";
-    if (localSpeed < 2)
+    if (localSpeed < 2.5)
       return "warning";
     return "danger";
   };
@@ -28,7 +28,7 @@ export default function SpeedSlider({ speed, setSpeed }) {
           c={`var(--color-${getSpeedColor()})`}
           style={{ transition: ".3s" }}
         >
-          x{localSpeed}
+          ×{localSpeed.toFixed(2)}
         </Text>
       </Group>
 
@@ -36,13 +36,13 @@ export default function SpeedSlider({ speed, setSpeed }) {
         value={localSpeed}
         onChange={setLocalSpeed}
         onChangeEnd={setSpeed}
-        min={0.2}
-        max={3}
-        step={0.2}
+        min={0.05}
+        max={5}
+        step={0.05}
         size="sm"
         color={`var(--color-${getSpeedColor()}-bg)`}
         label={null}
-        marks={[{ value: 0.2 }, { value: 1 }, { value: 2 }, { value: 3 }]}
+        marks={[{ value: 0.1 }, { value: 1 }, { value: 2.5 }, { value: 5 }]}
         styles={{
           root: {
             transition: "all 0.3s ease",
