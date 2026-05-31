@@ -34,18 +34,35 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
       }
       newGrid[path[pathIndex]] |= CELL.PERSON;
 
-      // NẾU NGƯỜI CHẠY CHẠM ĐÍCH (HẾT MẢNG PATH)
+      // NẾU NGƯỜI CHẠY HẾT ĐƯỜNG (Dù là đường ra ngoài hay đường đi trốn)
       if (runTick >= path.length - 1) {
-        isFinished = true;
-        status = "won";
+        if (plan.isWin) {
+          // Thật sự thoát ra ngoài an toàn
+          isFinished = true;
+          status = "won";
+        } else {
+          // Kịch bản sinh tồn: Chạy đến góc kẹt, đứng chờ lửa tới thiêu
+          const currentPos = path[pathIndex];
+          const isBurned = fireDistance[currentPos] <= simTime / fireRate;
+          
+          if (isBurned || simTime > 2000) {
+            isFinished = true;
+            status = "lost";
+          }
+        }
       }
     } else {
       newGrid[personStart] |= CELL.PERSON;
 
-      // NẾU KHÔNG CÓ ĐƯỜNG RA (BỊ CHẶN HOẶC CHẾT)
-      isFinished = true;
-      status = "lost";
-      simTime = visitedNodesInOrder.length > 0 ? visitedNodesInOrder[visitedNodesInOrder.length - 1].d : 0;
+      // XÓA TUA NHANH THỜI GIAN: Cho ngọn lửa tiếp tục lan từ từ theo runTick
+      const isBurned = fireDistance[personStart] <= simTime / fireRate;
+      
+      // Chỉ hiện thông báo Lost khi lửa THỰC SỰ đã cháy đến ô người đứng
+      // (Hoặc nếu kẹt góc quá lâu > 2000 tick thì cũng tự ngắt để tránh treo trình duyệt)
+      if (isBurned || simTime > 2000) {
+        isFinished = true;
+        status = "lost";
+      }
     }
   }
 

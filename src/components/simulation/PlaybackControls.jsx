@@ -10,7 +10,7 @@ export default function SimControls({ isPlaying, onPlayPause, onReset }) {
         onClick={onPlayPause}
         style={{ width: 120, transition: "all 0.2s ease" }}
       >
-        {isPlaying ? "⏸️ Pause" : "▶️ Run"}
+        {isPlaying ? "⏸️ Dừng" : "▶️ Chạy"}
       </Button>
 
       <Button
@@ -18,7 +18,7 @@ export default function SimControls({ isPlaying, onPlayPause, onReset }) {
         onClick={onReset}
         style={{ width: 120, transition: "all 0.2s ease" }}
       >
-        🔄 Reset
+        🔄 Đặt lại
       </Button>
     </Button.Group>
   );

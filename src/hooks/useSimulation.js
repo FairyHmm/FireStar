@@ -54,9 +54,9 @@ export const useSimulation = ({ maze }) => {
         // Dùng setTimeout 100ms để đợi trình duyệt vẽ xong nốt bước chân cuối cùng rồi mới bật Popup
         setTimeout(() => {
           if (status === "won") {
-            alert(`🎉 BẠN ĐÃ AN TOÀN!\n\n⏱ Thời gian thoát: ${simTime} bước\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
+            alert(`🎉 BẠN ĐÃ AN TOÀN!\n\n⏱ Thời gian thoát: ${simTime} tick\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
           } else if (status === "lost") {
-            alert(`🔥 BẠN ĐÃ BỊ LỬA THIÊU RỤI!\n\n⏱ Thời gian cầm cự: ${simTime} bước\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
+            alert(`🔥 BẠN ĐÃ BỊ LỬA THIÊU RỤI!\n\n⏱ Thời gian cầm cự: ${simTime} tick\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
           }
         }, 100);
       }

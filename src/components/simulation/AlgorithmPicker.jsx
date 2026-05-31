@@ -8,7 +8,7 @@ export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
     algoList.find((i) => i.value === algoKey) || ALGORITHMS.bfs;
 
   return (
-    <Stack gap={4} w={220}>
+    <Stack gap={4} w={335}>
       <Text
         size="xs"
         c="var(--color-text-muted)"

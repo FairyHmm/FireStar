@@ -94,7 +94,7 @@ export const useCanvas = ({
         isResize || activeTool === "wall" || activeTool === "tile";
 
       // 2. Render Algo if: Resizing OR Not found path yet
-      const shouldRenderAlgo = isResize || !isReadOnly;
+      const shouldRenderAlgo = true;
 
       // 3. Render Entity if: Resizing OR Editing OR Have found path
       const shouldRenderEntity = isResize || activeTool || isReadOnly;

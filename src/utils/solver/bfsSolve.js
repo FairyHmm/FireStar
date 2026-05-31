@@ -11,16 +11,27 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
   const visitedNodesInOrder = [];
   gScore[startIdx] = 0;
 
+  // BIẾN SINH TỒN: Ghi nhớ nơi sống dai nhất
+  let bestSurvivalNode = startIdx;
+  let maxSurvivalTime = -1;
+
   while (head < queue.length) {
     const cur = queue[head++];
     const currentDist = gScore[cur];
     visitedNodesInOrder.push({ idx: cur, d: currentDist });
 
+    // Cập nhật kỷ lục sống sót
+    if (fireDistance[cur] > maxSurvivalTime) {
+      maxSurvivalTime = fireDistance[cur];
+      bestSurvivalNode = cur;
+    }
+
     const r = Math.floor(cur / cols);
     const c = cur % cols;
 
+    // TÌM THẤY LỐI THOÁT -> THẮNG
     if (isAtBoundary(r, c, rows, cols)) {
-      return { visitedNodesInOrder, path: tracePath(trace, startIdx, cur) };
+      return { visitedNodesInOrder, path: tracePath(trace, startIdx, cur), isWin: true };
     }
 
     for (let i = 0; i < 4; i++) {
@@ -38,5 +49,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
       }
     }
   }
-  return { visitedNodesInOrder, path: null };
+  
+  // KHÔNG CÓ LỐI THOÁT -> CHẠY ĐI TRỐN
+  return { visitedNodesInOrder, path: tracePath(trace, startIdx, bestSurvivalNode), isWin: false };
 }

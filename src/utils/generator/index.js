@@ -6,19 +6,19 @@ export const ALGORITHMS = {
   dfs: {
     value: "dfs",
     fn: dfsGen,
-    label: "DFS",
+    label: "DFS - Tìm kiếm sâu (đệ quy quay lui)",
     disabled: false
   },
   filled: {
     value: "filled",
     fn: filledGen,
-    label: "Filled",
+    label: "Đổ tường toàn bộ",
     disabled: false
   },
   empty: {
     value: "empty",
     fn: emptyGen,
-    label: "Empty",
+    label: "Trống (có tường bao quanh)",
     disabled: false
   },
 };

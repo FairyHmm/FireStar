@@ -12,7 +12,7 @@ export default function MazeGeneration({ algo, setAlgo, onGenerate }) {
         color="var(--color-primary)"
         style={{ transition: "all 0.2s ease" }}
       >
-        Generate Maze
+        Sinh mê cung
       </Button>
 
       <Menu
@@ -44,7 +44,7 @@ export default function MazeGeneration({ algo, setAlgo, onGenerate }) {
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Menu.Label c="var(--color-text)">Generation Algorithms</Menu.Label>
+          <Menu.Label c="var(--color-text)">Thuật toán sinh mê cung</Menu.Label>
           {algos.map((item) => (
             <Menu.Item
               key={item.value}
