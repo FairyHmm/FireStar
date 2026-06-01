@@ -1,5 +1,7 @@
 import { bfsSolve } from "./bfsSolve";
 import { aStarSolve } from "./aStarSolve.js";
+import { iddfsSolve } from "./iddfsSolve.js";  
+import { beamSolve } from "./beamSolve.js"; 
 
 export const ALGORITHMS = {
   bfs: {
@@ -18,16 +20,16 @@ export const ALGORITHMS = {
   },
   iddfs: {
     value: "iddfs",
-    fn: null,
-    label: "idDPS",
+    fn: iddfsSolve,       
+    label: "idDFS",      
     description: "Tìm kiếm sâu dần",
-    disabled: true
+    disabled: false    
   },
   beam: {
     value: "beam",
-    fn: null,
+    fn: beamSolve,       
     label: "Beam Search",
     description: "Tìm kiếm chùm cục bộ",
-    disabled: true
+    disabled: false
   }
 };
