@@ -8,7 +8,7 @@ export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
     algoList.find((i) => i.value === algoKey) || ALGORITHMS.bfs;
 
   return (
-    <Stack gap={4} w={335}>
+    <Stack gap={4} w={160}>
       <Text
         size="xs"
         c="var(--color-text-muted)"
@@ -58,6 +58,7 @@ export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
                   backgroundColor:
                     item.value === algoKey ? "var(--color-primary)" : "",
                   transition: "background-color 0.3s",
+                  whiteSpace: "nowrap",
                   "&:hover": {
                     backgroundColor:
                       item.value === algoKey
@@ -72,7 +73,7 @@ export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
                   : "var(--color-ac)"
               }
             >
-              {item.label}
+              {item.label} - {item.description}
             </Menu.Item>
           ))}
         </Menu.Dropdown>

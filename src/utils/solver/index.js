@@ -5,25 +5,29 @@ export const ALGORITHMS = {
   bfs: {
     value: "bfs",
     fn: bfsSolve,
-    label: "BFS - Tìm kiếm theo chiều rộng",
+    label: "BFS",
+    description: "Tìm kiếm theo chiều rộng",
     disabled: false
   },
   astar: {
     value: "astar",
     fn: aStarSolve,
-    label: "A* - Tìm kiếm cực tiểu với tri thức bổ sung",
+    label: "A*",
+    description: "Tìm kiếm cực tiểu với tri thức bổ sung",
     disabled: false
   },
   iddfs: {
     value: "iddfs",
     fn: null,
-    label: "IDS - Tìm kiếm sâu dần (Đang cập nhật...)",
+    label: "idDPS",
+    description: "Tìm kiếm sâu dần",
     disabled: true
   },
   beam: {
     value: "beam",
     fn: null,
-    label: "Tìm kiếm chùm cục bộ (Đang cập nhật...)",
+    label: "Beam Search",
+    description: "Tìm kiếm chùm cục bộ",
     disabled: true
   }
 };
