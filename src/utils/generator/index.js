@@ -6,7 +6,7 @@ export const ALGORITHMS = {
   dfs: {
     value: "dfs",
     fn: dfsGen,
-    label: "DFS - Tìm kiếm sâu (đệ quy quay lui)",
+    label: "DFS - Tìm kiếm theo chiều sâu (đệ quy quay lui)",
     disabled: false
   },
   filled: {

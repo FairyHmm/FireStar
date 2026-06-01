@@ -34,6 +34,7 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
     visitedNodesInOrder: result.visitedNodesInOrder,
     path: result.path,
     personStart,
-    fireRate
+    fireRate,
+    isWin: result.isWin
   };
 };

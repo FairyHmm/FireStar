@@ -9,7 +9,7 @@ export const useDesign = ({ maze }) => {
 
   const handleGenerate = useCallback(() => {
     const algo = ALGORITHMS[genAlgoKey]?.fn;
-    if (!algo) return alert("Algorithm not found");
+    if (!algo) return alert("Không tìm được thuật toán tạo mê cung!");
 
     const newGrid = algo(maze.state.h, maze.state.w);
     maze.actions.updateGrid(newGrid);

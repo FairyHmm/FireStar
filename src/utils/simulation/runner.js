@@ -1,7 +1,7 @@
 import { CELL } from "../constants";
 
 export const calculateGridAtTick = (plan, tick, w, h) => {
-  const { originalGrid, fireDistance, visitedNodesInOrder, path, personStart, fireRate } = plan;
+  const { originalGrid, fireDistance, visitedNodesInOrder, path, personStart, fireRate, isWin } = plan;
   const newGrid = new Uint8Array(originalGrid);
 
   newGrid[personStart] &= ~CELL.PERSON;
