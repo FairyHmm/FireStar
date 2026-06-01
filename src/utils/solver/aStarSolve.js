@@ -1,6 +1,7 @@
 import { CELL } from "../constants.js";
 import { MinHeap } from "./minHeap.js";
 import { DR, DC, tracePath, isSafeFromFire, isAtBoundary } from "./solverUtils.js";
+import { createHeuristic } from "./heuristic.js"; 
 
 export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1) {
   const size = rows * cols;
@@ -12,11 +13,13 @@ export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 
   
   const visitedNodesInOrder = [];
 
-  const getH = (idx) => {
-    const r = Math.floor(idx / cols);
-    const c = Math.floor(idx % cols);
-    return Math.min(r, rows - 1 - r, c, cols - 1 - c);
-  };
+  // const getH = (idx) => {
+  //   const r = Math.floor(idx / cols);
+  //   const c = Math.floor(idx % cols);
+  //   return Math.min(r, rows - 1 - r, c, cols - 1 - c);
+  // };
+
+  const getH = createHeuristic(grid, rows, cols); // gọi hàm heuristic mới
 
   const pq = new MinHeap();
   gScore[startIdx] = 0;
