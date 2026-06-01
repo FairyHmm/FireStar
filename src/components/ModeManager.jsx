@@ -3,6 +3,7 @@ import { AppShell, Stack } from "@mantine/core";
 import ModeSwitcher from "./ModeSwitcher";
 import Toolbar from "./Toolbar";
 import Canvas from "./Canvas";
+import SimulationResultModal from "./SimulationResultModal";
 import { useDesign } from "../hooks/useDesign";
 import { useSimulation } from "../hooks/useSimulation";
 import { useMaze } from "../hooks/useMaze";
@@ -10,9 +11,15 @@ import { useMaze } from "../hooks/useMaze";
 export default function ModeManager() {
   const [mode, setMode] = useState("design");
 
+  const [simResult, setSimResult] = useState(null);
+
   const maze = useMaze();
   const design = useDesign({ maze });
-  const simulation = useSimulation({ maze });
+
+  const simulation = useSimulation({
+    maze,
+    onSimulationEnd: setSimResult
+  });
 
   const handleModeChange = (newMode) => {
     if (newMode === "design")
@@ -42,6 +49,12 @@ export default function ModeManager() {
           />
         </Stack>
       </AppShell.Main>
+
+      <SimulationResultModal
+        opened={simResult !== null}
+        onClose={() => setSimResult(null)}
+        data={simResult}
+      />
     </AppShell>
   );
 }

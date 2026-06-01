@@ -3,7 +3,7 @@ import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
 import { ALGORITHMS } from "../utils/solver/index";
 
-export const useSimulation = ({ maze }) => {
+export const useSimulation = ({ maze, onSimulationEnd }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
   const [isPlaying, setIsPlaying] = useState(false);
   const [fireSpeed, setFireSpeed] = useState(1);
@@ -26,10 +26,14 @@ export const useSimulation = ({ maze }) => {
       maze.actions.saveGrid();
       return true;
     } catch (error) {
-      alert(error.message);
+      if (onSimulationEnd) {
+        onSimulationEnd({ status: "error", message: error.message });
+      } else {
+        alert(error.message);
+      }
       return false;
     }
-  }, [maze, algoFn, fireSpeed]);
+  }, [maze, algoFn, fireSpeed, onSimulationEnd]);
 
   const handleTick = useCallback(
     (tick) => {
@@ -52,17 +56,17 @@ export const useSimulation = ({ maze }) => {
 
         const nodesExplored = planRef.current.visitedNodesInOrder.length;
 
-        // Dùng setTimeout 100ms để đợi trình duyệt vẽ xong nốt bước chân cuối cùng rồi mới bật Popup
-        setTimeout(() => {
-          if (status === "won") {
-            alert(`🎉 BẠN ĐÃ AN TOÀN!\n\n⏱ Thời gian thoát: ${simTime} tick\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
-          } else if (status === "lost") {
-            alert(`🔥 BẠN ĐÃ BỊ LỬA THIÊU RỤI!\n\n⏱ Thời gian cầm cự: ${simTime} tick\n🔍 Số ô đã duyệt: ${nodesExplored} ô`);
-          }
-        }, 100);
+        // Bắn dữ liệu thô ra ngoài thông qua callback
+        if (onSimulationEnd) {
+          onSimulationEnd({
+            status,
+            simTime,
+            nodesExplored,
+          });
+        }
       }
     },
-    [maze],
+    [maze, onSimulationEnd],
   );
 
   const play = useCallback(() => {
