@@ -3,7 +3,7 @@ import { ALGORITHMS } from "../utils/generator/index";
 
 export const useDesign = ({ maze }) => {
   const [activeTool, setActiveTool] = useState("wall");
-  const [genAlgoKey, setGenAlgoKey] = useState("dfs");
+  const [genAlgoKey, setGenAlgoKey] = useState("tree");
 
   const lastState = useRef({ w: 0, h: 0, algo: "" });
 
