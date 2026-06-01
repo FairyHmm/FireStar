@@ -1,18 +1,28 @@
 import { useState, useEffect } from "react";
 import { Box, Text, Slider, Group } from "@mantine/core";
 
-export default function SpeedSlider({ speed, setSpeed }) {
-  const [localSpeed, setLocalSpeed] = useState(speed);
+export default function SpeedSlider({
+  value,
+  onChange,
+  label,
+  min = 1,
+  max = 100,
+  step = 1,
+  unit = "",
+  marks = [],
+  variant,
+}) {
+  const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {
-    setLocalSpeed(speed);
-  }, [speed]);
+    setLocalValue(value);
+  }, [value]);
 
   const getSpeedColor = () => {
-    if (localSpeed < 1)
-      return "success";
-    if (localSpeed < 2.5)
-      return "warning";
+    if (!marks || marks.length < 4) return "success";
+
+    if (localValue < marks[1].value) return "success";
+    if (localValue < marks[2].value) return "warning";
     return "danger";
   };
 
@@ -20,7 +30,7 @@ export default function SpeedSlider({ speed, setSpeed }) {
     <Box w={180} ml="md">
       <Group justify="space-between" mb={4}>
         <Text size="xs" fw={700} c="var(--color-text-muted)" lts={0.5}>
-          Tốc độ lửa lan
+          {label}
         </Text>
         <Text
           size="xs"
@@ -28,21 +38,21 @@ export default function SpeedSlider({ speed, setSpeed }) {
           c={`var(--color-${getSpeedColor()})`}
           style={{ transition: ".3s" }}
         >
-          ×{localSpeed.toFixed(2)}
+          {unit === "×" ? `×${localValue.toFixed(2)}` : `${localValue}${unit}`}
         </Text>
       </Group>
 
       <Slider
-        value={localSpeed}
-        onChange={setLocalSpeed}
-        onChangeEnd={setSpeed}
-        min={0.05}
-        max={5}
-        step={0.05}
+        value={localValue}
+        onChange={setLocalValue}
+        onChangeEnd={onChange}
+        min={min}
+        max={max}
+        step={step}
         size="sm"
         color={`var(--color-${getSpeedColor()}-bg)`}
         label={null}
-        marks={[{ value: 0.1 }, { value: 1 }, { value: 2.5 }, { value: 5 }]}
+        marks={marks}
         styles={{
           root: {
             transition: "all 0.3s ease",

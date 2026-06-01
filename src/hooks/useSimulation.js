@@ -6,7 +6,8 @@ import { ALGORITHMS } from "../utils/solver/index";
 export const useSimulation = ({ maze }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(1);
+  const [fireSpeed, setFireSpeed] = useState(1);
+  const [simSpeed, setSimSpeed] = useState(20);
 
   const planRef = useRef(null);
   const tickRef = useRef(0);
@@ -19,7 +20,7 @@ export const useSimulation = ({ maze }) => {
   const preparePlan = useCallback(() => {
     try {
       const { grid, w, h } = maze.state;
-      const plan = initialiseSimulation(grid, w, h, algoFn, speed);
+      const plan = initialiseSimulation(grid, w, h, algoFn, fireSpeed);
       planRef.current = plan;
 
       maze.actions.saveGrid();
@@ -28,13 +29,13 @@ export const useSimulation = ({ maze }) => {
       alert(error.message);
       return false;
     }
-  }, [maze, algoFn, speed]);
+  }, [maze, algoFn, fireSpeed]);
 
   const handleTick = useCallback(
     (tick) => {
       if (!planRef.current) return;
       const { w, h } = maze.state;
-      
+
       // Bóc tách dữ liệu trả về từ Runner
       const { newGrid, isFinished, status, simTime } = calculateGridAtTick(
         planRef.current,
@@ -96,17 +97,19 @@ export const useSimulation = ({ maze }) => {
     const id = setInterval(() => {
       tickRef.current++;
       handleTick(tickRef.current);
-    }, 50);
+    }, simSpeed);
 
     return () => clearInterval(id);
-  }, [isPlaying, handleTick]);
+  }, [isPlaying, handleTick, simSpeed]);
 
   return {
     algoKey,
     setAlgoKey,
     isPlaying,
-    speed,
-    setSpeed,
+    fireSpeed,
+    setFireSpeed,
+    simSpeed,
+    setSimSpeed,
     togglePlay,
     reset,
   };
