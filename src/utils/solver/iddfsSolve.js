@@ -16,30 +16,34 @@ export function iddfsSolve(
   fireRate = 1,
 ) {
   const size = rows * cols;
-  const visitedNodesInOrder = [];
-
+  
   let bestSurvivalNode = startIdx;
   let maxSurvivalTime = -1;
   let bestTrace = new Int32Array(size).fill(-1);
+  
+  // Khai báo biến giữ kết quả mô phỏng cuối cùng
+  let finalVisitedNodes = [];
 
-  // Giới hạn độ sâu tối đa (bằng tổng số ô)
   const maxDepth = rows * cols;
 
-  for (let limit = 0; limit <= maxDepth; limit++) {
+  //Tăng bước nhảy của limit để giảm số vòng lặp thừa
+  for (let limit = 0; limit <= maxDepth; limit += 1) {
     const trace = new Int32Array(size).fill(-1);
     const gScore = new Int32Array(size).fill(2e9);
+    
+    // Đưa mảng ghi hình vào TRONG vòng lặp để reset sau mỗi lần tăng limit
+    const currentVisitedNodes = [];
+    
     let foundExit = -1;
     let completelyExplored = true;
 
-    // Stack lưu trạng thái DFS: { idx, d }
     const stack = [{ idx: startIdx, d: 0 }];
     gScore[startIdx] = 0;
 
     while (stack.length > 0) {
       const { idx: cur, d: currentDist } = stack.pop();
-      visitedNodesInOrder.push({ idx: cur, d: currentDist });
+      currentVisitedNodes.push({ idx: cur, d: currentDist });
 
-      // Lưu lại vị trí sống sót lâu nhất phòng trường hợp không có đường ra
       if (fireDistance[cur] > maxSurvivalTime) {
         maxSurvivalTime = fireDistance[cur];
         bestSurvivalNode = cur;
@@ -49,14 +53,12 @@ export function iddfsSolve(
       const r = Math.floor(cur / cols);
       const c = cur % cols;
 
-      // Tìm thấy lối thoát
       if (isAtBoundary(r, c, rows, cols)) {
         foundExit = cur;
         bestTrace = new Int32Array(trace);
         break;
       }
 
-      // Chỉ mở rộng nhánh nếu chưa chạm tới giới hạn độ sâu (limit) của vòng lặp này
       if (currentDist < limit) {
         for (let i = 0; i < 4; i++) {
           const nr = r + DR[i],
@@ -78,29 +80,28 @@ export function iddfsSolve(
           }
         }
       } else {
-        // Vẫn còn các node có thể đi tiếp ở độ sâu lớn hơn
         completelyExplored = false;
       }
     }
 
+    // Cập nhật lại kết quả mô phỏng của vòng lặp hiện tại
+    finalVisitedNodes = currentVisitedNodes;
+
     if (foundExit !== -1) {
       return {
-        visitedNodesInOrder,
+        visitedNodesInOrder: finalVisitedNodes,
         path: tracePath(bestTrace, startIdx, foundExit),
         isWin: true,
       };
     }
 
-    // Nếu toàn bộ bản đồ đã được duyệt xong ở độ sâu này mà không tìm thấy đường thoát
-    // (nghĩa là không còn node nào bị chặn bởi limit nữa), thì dừng lại để tiết kiệm tài nguyên.
     if (completelyExplored) {
       break;
     }
   }
 
-  // Kịch bản sinh tồn (Không tìm thấy đường ra)
   return {
-    visitedNodesInOrder,
+    visitedNodesInOrder: finalVisitedNodes,
     path: tracePath(bestTrace, startIdx, bestSurvivalNode),
     isWin: false,
   };
