@@ -5,14 +5,14 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL-blue" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Live%20Demo-🌐-orange" alt="Live Demo"></a>
+  <a href="https://firestar-dhc.pages.dev/"><img src="https://img.shields.io/badge/Live%20Demo-🌐-green" alt="Live Demo"></a>
 </p>
 
 # FireStar
 
 A maze-solving visualisation, featuring dynamic fire spread simulation and pathfinding algorithms.
 
-<!-- ![Algorithm in action](./public/demo.gif) -->
+![Algorithm in action](./public/demo.gif)
 
 ## Overview
 
@@ -30,7 +30,9 @@ FireStar is a pathfinding visualiser that simulates navigation through a hostile
 ## Algorithms
 
 - **[Breadth-First Search](https://en.wikipedia.org/wiki/Breadth-first_search)**: Explores all neighbor nodes at the current depth before moving to the next depth level.  
+- **[Iterative Deepening DFS](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search)**: Combines the space-efficiency of depth-first search with the optimality of breadth-first search by gradually increasing the depth limit.  
 - **[A\* Search](https://en.wikipedia.org/wiki/A*_search_algorithm)**: Uses heuristics to prioritize promising paths while considering spreading fire.  
+- **[Beam Search](https://en.wikipedia.org/wiki/Beam_search)**: Optimizes memory usage by exploring only a limited number of the most promising paths at each level.
 - **Cellular Automata Fire**: Fire spreads based on neighboring cells, dynamically blocking paths.
 
 ## Tech Stack
@@ -81,8 +83,7 @@ pnpm run build
 
 ## Future Improvements
 
-- [ ] Implementation of [idDFS](https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search), [Beam](https://en.wikipedia.org/wiki/Beam_search), and [Jump point](https://en.wikipedia.org/wiki/Jump_point_search) search.
-- [ ] Implementation of [Bidirectional](https://en.wikipedia.org/wiki/Bidirectional_search) search.
+- [ ] Implementation of more maze algorithms.
 - [ ] Customisable fire spread patterns.
 - [ ] Support for terrain types to create variable weights.
 - [ ] Performance benchmarking suite.
