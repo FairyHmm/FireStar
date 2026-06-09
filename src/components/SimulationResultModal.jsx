@@ -18,13 +18,83 @@ export default function SimulationResultModal({ opened, onClose, data }) {
   const { color = "orange", title = "" } =
     STATUS_CONFIG[currentData?.status] ?? {};
 
-  const message =
-    currentData?.status === "error"
-      ? currentData.message
-      : currentData
-        ? `⏱ Thời gian: ${currentData.simTime} tick
-🔍 Số ô đã duyệt: ${currentData.nodesExplored} ô`
-        : "";
+  const renderContent = () => {
+    if (!currentData) return null;
+
+    if (currentData.status === "error") {
+      return (
+        <Text size="sm" c="var(--color-text)" ta="center" style={{ whiteSpace: "pre-line" }}>
+          {currentData.message}
+        </Text>
+      );
+    }
+
+    return (
+      <Stack align="center" gap={32} py="sm">
+        {/* KHỐI THỜI GIAN */}
+        <Stack align="center" gap={8}>
+          <Text size="sm" fw={700} c="var(--color-text-muted)" tt="uppercase" lts={1}>
+            Thời gian ⏱ 
+          </Text>
+          <Group gap="sm" align="center">
+            <Text 
+              fz={64} 
+              fw={900} 
+              c="var(--color-warning)" 
+              lh={1} 
+              style={{ textShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+            >
+              {currentData.simTime}
+            </Text>
+            <Text 
+              fz="sm" 
+              fw={800} 
+              c="var(--color-warning)" 
+              bg="var(--color-bg)" 
+              px="md" 
+              py={6} 
+              style={{ borderRadius: "100px", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)" }}
+              tt="uppercase" 
+              lts={2}
+            >
+              Tick
+            </Text>
+          </Group>
+        </Stack>
+
+        {/* KHỐI SỐ Ô ĐÃ DUYỆT */}
+        <Stack align="center" gap={8}>
+          <Text size="sm" fw={700} c="var(--color-text-muted)" tt="uppercase" lts={1}>
+            Số ô đã duyệt 🔍 
+          </Text>
+          <Group gap="sm" align="center">
+            <Text 
+              fz={64} 
+              fw={900} 
+              c="var(--color-incomplete)" 
+              lh={1} 
+              style={{ textShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+            >
+              {currentData.nodesExplored}
+            </Text>
+            <Text 
+              fz="sm" 
+              fw={800} 
+              c="var(--color-incomplete)" 
+              bg="var(--color-bg)" 
+              px="md" 
+              py={6} 
+              style={{ borderRadius: "100px", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)" }}
+              tt="uppercase" 
+              lts={2}
+            >
+              Ô
+            </Text>
+          </Group>
+        </Stack>
+      </Stack>
+    );
+  };
 
   return (
     <Modal
@@ -32,7 +102,17 @@ export default function SimulationResultModal({ opened, onClose, data }) {
       onClose={onClose}
       centered
       title={
-        <Text fw={700} size="lg">
+        <Text 
+          fw={900} 
+          fz={28} 
+          c={color} 
+          ta="center" 
+          style={{ 
+            width: "100%", 
+            letterSpacing: "0.5px",
+            textShadow: "0 2px 8px rgba(0,0,0,0.2)"
+          }}
+        >
           {title}
         </Text>
       }
@@ -41,22 +121,21 @@ export default function SimulationResultModal({ opened, onClose, data }) {
       styles={{
         content: { backgroundColor: "var(--color-fg)" },
         header: { backgroundColor: "var(--color-fg)" },
+        title: { width: "100%", textAlign: "center" }
       }}
     >
-      <Stack>
-        <Text
-          size="sm"
-          c="var(--color-text)"
-          style={{ whiteSpace: "pre-line" }}
-        >
-          {message}
-        </Text>
+      <Stack gap="xl">
+        {renderContent()}
 
-        <Group justify="flex-end">
-          <Button color={color} onClick={onClose}>
-            Xác nhận
-          </Button>
-        </Group>
+        <Button 
+          color={color} 
+          onClick={onClose} 
+          size="md" 
+          radius="md" 
+          fullWidth
+        >
+          Xác nhận
+        </Button>
       </Stack>
     </Modal>
   );
