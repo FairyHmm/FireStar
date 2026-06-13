@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Modal, Stack, Text, Group, Button } from "@mantine/core";
+import { Modal, Text, Button, Grid } from "@mantine/core";
+import MetricCard from "./MetricCard";
 
 const STATUS_CONFIG = {
   error: { color: "orange", title: "⚠️ Lỗi cấu hình" },
@@ -8,112 +8,54 @@ const STATUS_CONFIG = {
 };
 
 export default function SimulationResultModal({ opened, onClose, data }) {
-  const [activeData, setActiveData] = useState(data);
+  const status = STATUS_CONFIG[data?.status] ?? STATUS_CONFIG.error;
 
-  useEffect(() => {
-    if (data) setActiveData(data);
-  }, [data]);
-
-  const currentData = data ?? activeData;
-  const { color = "orange", title = "" } =
-    STATUS_CONFIG[currentData?.status] ?? {};
-
-  const renderContent = () => {
-    if (!currentData) return null;
-
-    if (currentData.status === "error") {
-      return (
-        <Text size="sm" c="var(--color-text)" ta="center" style={{ whiteSpace: "pre-line" }}>
-          {currentData.message}
-        </Text>
-      );
-    }
-
-    return (
-      <Stack align="center" gap={32} py="sm">
-        {/* KHỐI THỜI GIAN */}
-        <Stack align="center" gap={8}>
-          <Text size="sm" fw={700} c="var(--color-text-muted)" tt="uppercase" lts={1}>
-            Thời gian ⏱ 
-          </Text>
-          <Group gap="sm" align="center">
-            <Text 
-              fz={64} 
-              fw={900} 
-              c="var(--color-warning)" 
-              lh={1} 
-              style={{ textShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
-            >
-              {currentData.simTime}
-            </Text>
-            <Text 
-              fz="sm" 
-              fw={800} 
-              c="var(--color-warning)" 
-              bg="var(--color-bg)" 
-              px="md" 
-              py={6} 
-              style={{ borderRadius: "100px", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)" }}
-              tt="uppercase" 
-              lts={2}
-            >
-              Tick
-            </Text>
-          </Group>
-        </Stack>
-
-        {/* KHỐI SỐ Ô ĐÃ DUYỆT */}
-        <Stack align="center" gap={8}>
-          <Text size="sm" fw={700} c="var(--color-text-muted)" tt="uppercase" lts={1}>
-            Số ô đã duyệt 🔍 
-          </Text>
-          <Group gap="sm" align="center">
-            <Text 
-              fz={64} 
-              fw={900} 
-              c="var(--color-incomplete)" 
-              lh={1} 
-              style={{ textShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
-            >
-              {currentData.nodesExplored}
-            </Text>
-            <Text 
-              fz="sm" 
-              fw={800} 
-              c="var(--color-incomplete)" 
-              bg="var(--color-bg)" 
-              px="md" 
-              py={6} 
-              style={{ borderRadius: "100px", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.2)" }}
-              tt="uppercase" 
-              lts={2}
-            >
-              Ô
-            </Text>
-          </Group>
-        </Stack>
-      </Stack>
-    );
-  };
+  const METRICS = data
+    ? [
+        {
+          key: "time",
+          label: "Thời gian",
+          color: "var(--color-primary)",
+          primary: data.status === "won" ? data.pathLength : data.simTime,
+          secondary: "tick",
+        },
+        {
+          key: "algo",
+          label: "Thuật toán",
+          color: "var(--color-danger)",
+          primary: data.algorithmName,
+        },
+        {
+          key: "coverage",
+          label: "Diện tích đã quét",
+          color: "var(--color-warning)",
+          primary: data.nodesExplored,
+          secondaryRaw: data.walkableCell,
+          secondaryTemplate: (val) => `/ ${val} ô trống đồ thị`,
+          ring: Math.round((data.nodesExplored / data.walkableCell) * 100) || 0,
+        },
+        {
+          key: "efficiency",
+          label: "Hiệu suất tìm đường",
+          color: "var(--color-success)",
+          primary: data.pathLength,
+          secondaryRaw: data.nodesExplored,
+          secondaryTemplate: (val) => `/ ${val} số ô đã duyệt`,
+          ring: Math.round((data.pathLength / data.nodesExplored) * 100) || 0,
+          hide: data.status !== "won",
+        },
+      ]
+    : [];
 
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       centered
+      withCloseButton={false}
       title={
-        <Text 
-          fw={900} 
-          fz={28} 
-          c={color} 
-          ta="center" 
-          style={{ 
-            width: "100%", 
-            letterSpacing: "0.5px",
-            textShadow: "0 2px 8px rgba(0,0,0,0.2)"
-          }}
-        >
-          {title}
+        <Text fw={700} size="xl" c={status.color}>
+          {status.title}
         </Text>
       }
       transitionProps={{ transition: "scale" }}
@@ -121,22 +63,33 @@ export default function SimulationResultModal({ opened, onClose, data }) {
       styles={{
         content: { backgroundColor: "var(--color-fg)" },
         header: { backgroundColor: "var(--color-fg)" },
-        title: { width: "100%", textAlign: "center" }
+        title: { width: "100%", textAlign: "center" },
       }}
+      radius="lg"
+      size="lg"
     >
-      <Stack gap="xl">
-        {renderContent()}
-
-        <Button 
-          color={color} 
-          onClick={onClose} 
-          size="md" 
-          radius="md" 
-          fullWidth
-        >
-          Xác nhận
-        </Button>
-      </Stack>
+      {data && (
+        <Grid grow>
+          {data.status === "error" ? (
+            <Grid.Col span={12}>
+              <Text ta="center" c="var(--color-text-muted)">
+                {data.message}
+              </Text>
+            </Grid.Col>
+          ) : (
+            METRICS.filter((m) => !m.hide).map((metric) => (
+              <Grid.Col key={metric.key} span={{ base: 12, sm: 6 }}>
+                <MetricCard metric={metric} isOpened={opened} />
+              </Grid.Col>
+            ))
+          )}
+          <Grid.Col span={12}>
+            <Button fullWidth onClick={onClose} color={status.color}>
+              Xác nhận
+            </Button>
+          </Grid.Col>
+        </Grid>
+      )}
     </Modal>
   );
 }

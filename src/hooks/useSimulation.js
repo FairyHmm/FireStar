@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { initialiseSimulation } from "../utils/simulation/initialiser";
 import { calculateGridAtTick } from "../utils/simulation/runner";
 import { ALGORITHMS } from "../utils/solver/index";
+import { CELL } from "../utils/constants";
 
 export const useSimulation = ({ maze, onSimulationEnd }) => {
   const [algoKey, setAlgoKey] = useState("bfs");
@@ -12,10 +13,9 @@ export const useSimulation = ({ maze, onSimulationEnd }) => {
   const planRef = useRef(null);
   const tickRef = useRef(0);
 
-  const algoFn = useMemo(() => {
-    const config = ALGORITHMS[algoKey];
-    return config?.fn || null;
-  }, [algoKey]);
+  // Get current algorithm configuration
+  const algoConfig = useMemo(() => ALGORITHMS[algoKey], [algoKey]);
+  const algoFn = useMemo(() => algoConfig?.fn || null, [algoConfig]);
 
   const preparePlan = useCallback(() => {
     try {
@@ -45,28 +45,37 @@ export const useSimulation = ({ maze, onSimulationEnd }) => {
         planRef.current,
         tick,
         w,
-        h
+        h,
       );
 
       maze.actions.updateGrid(newGrid);
 
       // NẾU MÔ PHỎNG KẾT THÚC
       if (isFinished) {
-        setIsPlaying(false); // Dừng vòng lặp
+        setIsPlaying(false);
 
-        const nodesExplored = planRef.current.visitedNodesInOrder.length;
+        let walkableCell = 0;
+        for (const cell of maze.state.grid) walkableCell += cell !== CELL.WALL;
 
-        // Bắn dữ liệu thô ra ngoài thông qua callback
+        const nodesExplored = planRef.current?.visitedNodesInOrder?.length || 0;
+        const pathLength =
+          planRef.current?.shortestPath?.length ||
+          planRef.current?.path?.length ||
+          0;
+
         if (onSimulationEnd) {
           onSimulationEnd({
             status,
-            simTime,
+            simTime: simTime || 0,
             nodesExplored,
+            walkableCell,
+            pathLength,
+            algorithmName: algoConfig?.label || algoKey.toUpperCase(),
           });
         }
       }
     },
-    [maze, onSimulationEnd],
+    [maze, onSimulationEnd, algoConfig, algoKey],
   );
 
   const play = useCallback(() => {
