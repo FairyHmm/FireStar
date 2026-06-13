@@ -31,7 +31,12 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
 
     // TÌM THẤY LỐI THOÁT -> THẮNG
     if (isAtBoundary(r, c, rows, cols)) {
-      return { visitedNodesInOrder, path: tracePath(trace, startIdx, cur), isWin: true };
+      return {
+        visitedNodesInOrder,
+        path: tracePath(trace, startIdx, cur),
+        trace,
+        isWin: true
+      };
     }
 
     for (let i = 0; i < 4; i++) {
@@ -49,7 +54,12 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
       }
     }
   }
-  
+
   // KHÔNG CÓ LỐI THOÁT -> CHẠY ĐI TRỐN
-  return { visitedNodesInOrder, path: tracePath(trace, startIdx, bestSurvivalNode), isWin: false };
+  return {
+    visitedNodesInOrder,
+    path: tracePath(trace, startIdx, bestSurvivalNode),
+    trace,
+    isWin: false
+  };
 }

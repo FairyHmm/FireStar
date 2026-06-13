@@ -1,24 +1,44 @@
 import { CELL } from "../constants";
 
 export const calculateGridAtTick = (plan, tick, w, h) => {
-  const { originalGrid, fireDistance, visitedNodesInOrder, path, personStart, fireRate, isWin } = plan;
+  const {
+    originalGrid,
+    fireDistance,
+    visitedNodesInOrder,
+    path,
+    personStart,
+    fireRate,
+    isWin,
+  } = plan;
   const newGrid = new Uint8Array(originalGrid);
 
   newGrid[personStart] &= ~CELL.PERSON;
 
   let simTime = 0;
-  let isFinished = false; // Biến báo hiệu kết thúc game
-  let status = "running"; // Trạng thái: "running", "won", "lost"
+  let isFinished = false;
+  let status = "running";
 
   if (tick < visitedNodesInOrder.length) {
     simTime = 0;
+    // Phase 1: Exploration
     for (let i = 0; i <= tick; i++) {
       newGrid[visitedNodesInOrder[i].idx] |= CELL.EXPLORED;
     }
-    // Giai đoạn 1: Máy đang tính, người đứng yên ở vạch xuất phát
+
+    // Draw path from current explored node back to start
+    if (plan.trace) {
+      let currentIdx = visitedNodesInOrder[tick].idx;
+
+      while (currentIdx !== personStart && plan.trace[currentIdx] !== -1) {
+        newGrid[currentIdx] |= CELL.PATH;
+        currentIdx = plan.trace[currentIdx];
+      }
+      newGrid[personStart] |= CELL.PATH;
+    }
+
     newGrid[personStart] |= CELL.PERSON;
-  }
-  else {
+  } else {
+    // Phase 2: Running the found path
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       newGrid[visitedNodesInOrder[i].idx] |= CELL.EXPLORED;
     }
@@ -26,25 +46,26 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
     const runTick = tick - visitedNodesInOrder.length;
     simTime = runTick;
 
-    if (path && path.length > 0) {
-      const pathIndex = Math.min(runTick, path.length - 1);
+    // REMOVED: The logic that clears the path (newGrid[i] &= ~CELL.PATH)
+    // We now keep the path drawn and just move the person on it.
 
-      for (let i = 0; i <= pathIndex; i++) {
+    if (path && path.length > 0) {
+      // CHANGE: Draw the FULL path immediately so it stays visible
+      for (let i = 0; i < path.length; i++) {
         newGrid[path[i]] |= CELL.PATH;
       }
+
+      const pathIndex = Math.min(runTick, path.length - 1);
       newGrid[path[pathIndex]] |= CELL.PERSON;
 
-      // NẾU NGƯỜI CHẠY HẾT ĐƯỜNG (Dù là đường ra ngoài hay đường đi trốn)
       if (runTick >= path.length - 1) {
         if (plan.isWin) {
-          // Thật sự thoát ra ngoài an toàn
           isFinished = true;
           status = "won";
         } else {
-          // Kịch bản sinh tồn: Chạy đến góc kẹt, đứng chờ lửa tới thiêu
           const currentPos = path[pathIndex];
           const isBurned = fireDistance[currentPos] <= simTime / fireRate;
-          
+
           if (isBurned || simTime > 2000) {
             isFinished = true;
             status = "lost";
@@ -53,12 +74,8 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
       }
     } else {
       newGrid[personStart] |= CELL.PERSON;
-
-      // XÓA TUA NHANH THỜI GIAN: Cho ngọn lửa tiếp tục lan từ từ theo runTick
       const isBurned = fireDistance[personStart] <= simTime / fireRate;
-      
-      // Chỉ hiện thông báo Lost khi lửa THỰC SỰ đã cháy đến ô người đứng
-      // (Hoặc nếu kẹt góc quá lâu > 2000 tick thì cũng tự ngắt để tránh treo trình duyệt)
+
       if (isBurned || simTime > 2000) {
         isFinished = true;
         status = "lost";
@@ -72,6 +89,5 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
     }
   }
 
-  // THAY ĐỔI: Trả về một Object thay vì chỉ trả mảng
   return { newGrid, isFinished, status, simTime };
 };

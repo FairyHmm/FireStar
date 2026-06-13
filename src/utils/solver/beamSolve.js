@@ -22,9 +22,9 @@ export function beamSolve(
   const trace = new Int32Array(size).fill(-1);
   const closed = new Uint8Array(size);
   const visitedNodesInOrder = [];
-  
+
   // Beam Width: Độ rộng của chùm (Mở rộng bao nhiêu node hứa hẹn nhất ở mỗi cấp độ)
-  const BEAM_WIDTH = 15; 
+  const BEAM_WIDTH = 15;
 
   const getH = createHeuristic(grid, rows, cols);
 
@@ -58,6 +58,7 @@ export function beamSolve(
       return {
         visitedNodesInOrder,
         path: tracePath(trace, startIdx, cur),
+        trace,
         isWin: true,
       };
     }
@@ -106,9 +107,15 @@ export function beamSolve(
     }
   }
 
+  // FAILURE: Snap to best survival node
+  if (bestSurvivalNode !== startIdx) {
+    visitedNodesInOrder.push({ idx: bestSurvivalNode, d: gScore[bestSurvivalNode] });
+  }
+
   return {
     visitedNodesInOrder,
     path: tracePath(trace, startIdx, bestSurvivalNode),
+    trace,
     isWin: false,
   };
 }

@@ -10,6 +10,7 @@ import {
 export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   const size = rows * cols;
   let bestNode = start;
+  let bestNodeDist = 0; // Track distance to best node
   let maxSurvival = -1;
   let exitNode = -1;
   let limit = 0;
@@ -68,6 +69,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
       if (fireDist[cur] > maxSurvival) {
         maxSurvival = fireDist[cur];
         bestNode = cur;
+        bestNodeDist = dist;
       }
 
       // Project 1D array index back to 2D coordinates
@@ -122,6 +124,13 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
     limit = maxDepth < limit ? maxDepth + 1 : limit + 1;
   }
 
+  // FAILURE: Snap visualization to best node
+  if (exitNode === -1 && bestNode !== start) {
+    visIdx[visCount] = bestNode;
+    visDist[visCount] = bestNodeDist;
+    visCount++;
+  }
+
   // Transform flat performance arrays into expected UI object schema exactly once
   const visitedNodesInOrder = new Array(visCount);
   for (let i = 0; i < visCount; i++) {
@@ -132,6 +141,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   return {
     visitedNodesInOrder,
     path: tracePath(trace, start, isWin ? exitNode : bestNode),
+    trace,
     isWin,
   };
 }

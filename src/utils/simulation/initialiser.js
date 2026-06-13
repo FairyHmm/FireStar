@@ -33,6 +33,7 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
     fireDistance,
     visitedNodesInOrder: result.visitedNodesInOrder,
     path: result.path,
+    trace: result.trace, // <--- ADDED THIS
     personStart,
     fireRate,
     isWin: result.isWin

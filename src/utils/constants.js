@@ -1,14 +1,14 @@
 export const tileSize = 20;
 
 export const CELL = {
-  PERSON:       0b00000001,
-  WALL:         0b00000010,
-  TILE:         0b00000100,
-  EXPLORED:     0b00001000,
-  FRONTIER:     0b00010000,
-  PATH:         0b00100000,
-  FIRE_CURRENT: 0b01000000,
-  FIRE_NEXT:    0b10000000
+  PERSON:       0b0000_0001,
+  WALL:         0b0000_0010,
+  TILE:         0b0000_0100,
+  EXPLORED:     0b0000_1000,
+  FRONTIER:     0b0001_0000,
+  PATH:         0b0010_0000,
+  FIRE_CURRENT: 0b0100_0000,
+  FIRE_NEXT:    0b1000_0000
 };
 
 export const COLORS = {
@@ -20,6 +20,8 @@ export const COLORS = {
   [CELL.PATH]:         0x4338ca,
   [CELL.FIRE_CURRENT]: 0xe11d48,
   [CELL.FIRE_NEXT]:    0xfca5a5,
+  EXPLORED_FIRE:       0xed3aac,
+  PATH_FIRE:           0x892fd2,
 };
 
 export const TOOL_COLORS = {
@@ -30,20 +32,24 @@ export const TOOL_COLORS = {
 };
 
 export const getColor = (val) => {
+  if ((val & CELL.PATH) && (val & CELL.FIRE_CURRENT))
+    return COLORS.PATH_FIRE;
+  if ((val & CELL.EXPLORED) && (val & CELL.FIRE_CURRENT))
+    return COLORS.EXPLORED_FIRE;
   if (val & CELL.PERSON)
     return COLORS[CELL.PERSON];
-  if (val & CELL.WALL)
-    return COLORS[CELL.WALL];
+  if (val & CELL.PATH)
+    return COLORS[CELL.PATH];
   if (val & CELL.EXPLORED)
     return COLORS[CELL.EXPLORED];
   if (val & CELL.FRONTIER)
     return COLORS[CELL.FRONTIER];
-  if (val & CELL.PATH)
-    return COLORS[CELL.PATH];
   if (val & CELL.FIRE_CURRENT)
     return COLORS[CELL.FIRE_CURRENT];
   if (val & CELL.FIRE_NEXT)
     return COLORS[CELL.FIRE_NEXT];
+  if (val & CELL.WALL)
+    return COLORS[CELL.WALL];
   return COLORS[CELL.TILE];
 };
 
