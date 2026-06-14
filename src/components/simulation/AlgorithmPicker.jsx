@@ -1,7 +1,7 @@
 import { Menu, Button, Stack, Text } from "@mantine/core";
 import { ALGORITHMS } from "../../utils/solver/index";
 
-export default function AlgorithmPicker({ algoKey = "bfs", setAlgoKey }) {
+export default function AlgorithmPicker({ algoKey = "astar", setAlgoKey }) {
   const algoList = Object.values(ALGORITHMS);
 
   const currentConfig =

@@ -27,12 +27,12 @@ export default function SimulationTools({ simulation }) {
         label="Tốc độ lửa lan"
         value={simulation.fireSpeed}
         onChange={simulation.setFireSpeed}
-        min={0.05}
-        max={5}
+        min={0.20}
+        max={10}
         step={0.05}
         unit="×"
         variant="fire"
-        marks={[{ value: 0.1 }, { value: 1 }, { value: 2.5 }, { value: 5 }]}
+        marks={[{ value: 0.05 }, { value: 2.5 }, { value: 5 }, { value: 10 }]}
       />
 
       <SpeedSlider

@@ -15,7 +15,7 @@ export default function SimulationResultModal({ opened, onClose, data }) {
         {
           key: "time",
           label: "Thời gian",
-          color: "var(--color-primary)",
+          color: "var(--color-incomplete)",
           primary: data.status === "won" ? data.pathLength : data.simTime,
           secondary: "tick",
         },

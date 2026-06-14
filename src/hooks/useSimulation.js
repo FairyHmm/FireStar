@@ -5,9 +5,9 @@ import { ALGORITHMS } from "../utils/solver/index";
 import { CELL } from "../utils/constants";
 
 export const useSimulation = ({ maze, onSimulationEnd }) => {
-  const [algoKey, setAlgoKey] = useState("bfs");
+  const [algoKey, setAlgoKey] = useState("astar");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [fireSpeed, setFireSpeed] = useState(1);
+  const [fireSpeed, setFireSpeed] = useState(2.5);
   const [simSpeed, setSimSpeed] = useState(20);
 
   const planRef = useRef(null);
