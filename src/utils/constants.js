@@ -40,10 +40,10 @@ export const getColor = (val) => {
     return COLORS[CELL.PERSON];
   if (val & CELL.PATH)
     return COLORS[CELL.PATH];
-  if (val & CELL.EXPLORED)
-    return COLORS[CELL.EXPLORED];
   if (val & CELL.FRONTIER)
     return COLORS[CELL.FRONTIER];
+  if (val & CELL.EXPLORED)
+    return COLORS[CELL.EXPLORED];
   if (val & CELL.FIRE_CURRENT)
     return COLORS[CELL.FIRE_CURRENT];
   if (val & CELL.FIRE_NEXT)

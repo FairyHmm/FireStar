@@ -22,31 +22,44 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
   if (tick < visitedNodesInOrder.length) {
     simTime = 0;
 
-    // Phase 1a: Draw Explored Nodes
+    // Track the last timeline tick index where a node was either explored or queued
+    const lastExploredTick = new Int32Array(w * h).fill(-1);
+    const lastFrontierTick = new Int32Array(w * h).fill(-1);
+    const activeNodeIdx = visitedNodesInOrder[tick].idx;
+
+    // 1. Record all historical explorations up to the current tick frame
     for (let i = 0; i <= tick; i++) {
-      newGrid[visitedNodesInOrder[i].idx] |= CELL.EXPLORED;
+      const nodeIdx = visitedNodesInOrder[i].idx;
+      newGrid[nodeIdx] |= CELL.EXPLORED;
+      lastExploredTick[nodeIdx] = i; // Save the latest frame index it was explored
     }
 
-    // Phase 1b: Draw Frontier Nodes discovered up to this tick
+    // 2. Record all frontier discoveries up to the current tick frame
     if (frontierNodesInOrder) {
       for (let i = 0; i < frontierNodesInOrder.length; i++) {
         const item = frontierNodesInOrder[i];
         if (item.discoveredAtTick <= tick) {
-          newGrid[item.idx] |= CELL.FRONTIER;
+          lastFrontierTick[item.idx] = item.discoveredAtTick; // Save the latest frame index it was queued
         }
       }
     }
 
-    // --- FIXED Phase 1c ---
-    // Only strip the frontier flag if the node was explored BEFORE the current tick.
-    // This allows the "soon to be explored" nodes at the current tick to stay painted!
-    for (let i = 0; i < tick; i++) {
-      newGrid[visitedNodesInOrder[i].idx] &= ~CELL.FRONTIER;
+    // 3. Compare timelines for every grid slot to determine the final bit state
+    for (let i = 0; i < newGrid.length; i++) {
+      if (i === activeNodeIdx)
+        // The active node being popped right now must drop its frontier tag
+        newGrid[i] &= ~CELL.FRONTIER;
+      else if (lastFrontierTick[i] > lastExploredTick[i])
+        // If it was queued MORE RECENTLY than it was explored, the frontier flag wins
+        newGrid[i] |= CELL.FRONTIER;
+      else
+        // Otherwise, the exploration is more recent, so clear any stale frontier tags
+        newGrid[i] &= ~CELL.FRONTIER;
     }
 
     // Draw path from current explored node back to start
     if (plan.trace) {
-      let currentIdx = visitedNodesInOrder[tick].idx;
+      let currentIdx = activeNodeIdx;
 
       while (currentIdx !== personStart && plan.trace[currentIdx] !== -1) {
         newGrid[currentIdx] |= CELL.PATH;

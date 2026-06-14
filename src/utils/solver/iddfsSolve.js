@@ -18,16 +18,16 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   // Search state trackers (flat arrays to guarantee zero-allocation hot paths)
   const trace = new Int32Array(size).fill(-1);
   const gScore = new Int32Array(size).fill(2e9);
-  const stIdx = new Int32Array(size);
-  const stDist = new Int32Array(size);
+  const stIdx = new Int32Array(size * 2);
+  const stDist = new Int32Array(size * 2);
 
   // Dirty-tracking buffer to clean up altered nodes without clearing the whole grid
   const modified = new Int32Array(size);
   let modCount = 0;
 
   // Telemetry logs used for final UI visualization mapping
-  const visIdx = new Int32Array(size);
-  const visDist = new Int32Array(size);
+  const visIdx = new Int32Array(size * 4);
+  const visDist = new Int32Array(size * 4);
   let visCount = 0;
 
   // Memory-safe flat frontier logging
@@ -43,8 +43,6 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
       trace[modified[i]] = -1;
     }
     modCount = 0;
-    visCount = 0;
-    frontCount = 0;
 
     let fullyExplored = true;
     let maxDepth = 0;
@@ -64,10 +62,13 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
       const cur = stIdx[ptr];
       const dist = stDist[ptr];
 
-      // Append node to visualization trail
-      visIdx[visCount] = cur;
-      visDist[visCount] = dist;
-      visCount++;
+      if (dist > gScore[cur]) continue;
+
+      if (visCount < visIdx.length) {
+        visIdx[visCount] = cur;
+        visDist[visCount] = dist;
+        visCount++;
+      }
 
       maxDepth = Math.max(maxDepth, dist);
 
@@ -111,15 +112,20 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
         if (
           nextDist < gScore[next] &&
           isSafeFromFire(nextDist, fireDist[next], fireRate) &&
-          gScore[next] === 2e9
+          gScore[next] === 2e9 &&
+          modCount < size
         ) {
           modified[modCount++] = next; // Flag node for subsequent clearing
 
           gScore[next] = nextDist;
           trace[next] = cur;
-          stIdx[ptr] = next;
-          stDist[ptr] = nextDist;
-          ptr++;
+
+          if (ptr < stIdx.length) {
+            stIdx[ptr] = next;
+            stDist[ptr] = nextDist;
+            ptr++;
+          }
+
           fullyExplored = false;
 
           if (frontCount < frontIdx.length) {
@@ -138,7 +144,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   }
 
   // FAILURE: Snap visualization to best node
-  if (exitNode === -1 && bestNode !== start) {
+  if (exitNode === -1 && bestNode !== start && visCount < visIdx.length) {
     visIdx[visCount] = bestNode;
     visDist[visCount] = bestNodeDist;
     visCount++;
@@ -154,7 +160,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   for (let i = 0; i < frontCount; i++) {
     frontierNodesInOrder[i] = {
       idx: frontIdx[i],
-      discoveredAtTick: frontTick[i]
+      discoveredAtTick: frontTick[i],
     };
   }
 
