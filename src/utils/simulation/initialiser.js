@@ -32,8 +32,9 @@ export const initialiseSimulation = (grid, w, h, algoFn, fireRate = 1) => {
     originalGrid: new Uint8Array(grid),
     fireDistance,
     visitedNodesInOrder: result.visitedNodesInOrder,
+    frontierNodesInOrder: result.frontierNodesInOrder,
     path: result.path,
-    trace: result.trace, // <--- ADDED THIS
+    trace: result.trace,
     personStart,
     fireRate,
     isWin: result.isWin

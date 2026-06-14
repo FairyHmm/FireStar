@@ -12,6 +12,7 @@ export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 
   const closed = new Uint8Array(size);
 
   const visitedNodesInOrder = [];
+  const frontierNodesInOrder = [];
 
   // const getH = (idx) => {
   //   const r = Math.floor(idx / cols);
@@ -52,6 +53,7 @@ export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 
     if (isAtBoundary(r, c, rows, cols)) {
       return {
         visitedNodesInOrder,
+        frontierNodesInOrder,
         path: tracePath(trace, startIdx, cur),
         trace,
         isWin: true
@@ -77,6 +79,10 @@ export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 
         const fScoreTieBreaked = f * tieBreaker + h;
 
         pq.push(next, fScoreTieBreaked);
+        frontierNodesInOrder.push({
+          idx: next,
+          discoveredAtTick: visitedNodesInOrder.length,
+        });
       }
     }
   }
@@ -88,6 +94,7 @@ export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 
 
   return {
     visitedNodesInOrder,
+    frontierNodesInOrder,
     path: tracePath(trace, startIdx, bestSurvivalNode),
     trace,
     isWin: false

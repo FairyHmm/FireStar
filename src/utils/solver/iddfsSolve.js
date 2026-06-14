@@ -30,6 +30,11 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   const visDist = new Int32Array(size);
   let visCount = 0;
 
+  // Memory-safe flat frontier logging
+  const frontIdx = new Int32Array(size * 4);
+  const frontTick = new Int32Array(size * 4);
+  let frontCount = 0;
+
   // Outer IDDFS iterative deepening loop
   while (limit <= size) {
     // Fast selective state reset based on nodes touched in the previous depth pass
@@ -39,6 +44,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
     }
     modCount = 0;
     visCount = 0;
+    frontCount = 0;
 
     let fullyExplored = true;
     let maxDepth = 0;
@@ -115,13 +121,20 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
           stDist[ptr] = nextDist;
           ptr++;
           fullyExplored = false;
+
+          if (frontCount < frontIdx.length) {
+            frontIdx[frontCount] = next;
+            frontTick[frontCount] = visCount - 1;
+            frontCount++;
+          }
         }
       }
     }
 
     // Terminate early if the exit is found or the graph is fully explored at this depth
     if (exitNode !== -1 || fullyExplored) break;
-    limit = maxDepth < limit ? maxDepth + 1 : limit + 1;
+
+    limit++;
   }
 
   // FAILURE: Snap visualization to best node
@@ -137,9 +150,18 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
     visitedNodesInOrder[i] = { idx: visIdx[i], d: visDist[i] };
   }
 
+  const frontierNodesInOrder = new Array(frontCount);
+  for (let i = 0; i < frontCount; i++) {
+    frontierNodesInOrder[i] = {
+      idx: frontIdx[i],
+      discoveredAtTick: frontTick[i]
+    };
+  }
+
   const isWin = exitNode !== -1;
   return {
     visitedNodesInOrder,
+    frontierNodesInOrder,
     path: tracePath(trace, start, isWin ? exitNode : bestNode),
     trace,
     isWin,

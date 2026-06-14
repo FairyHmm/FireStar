@@ -9,6 +9,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
   let head = 0;
 
   const visitedNodesInOrder = [];
+  const frontierNodesInOrder = [];
   gScore[startIdx] = 0;
 
   // BIẾN SINH TỒN: Ghi nhớ nơi sống dai nhất
@@ -33,6 +34,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
     if (isAtBoundary(r, c, rows, cols)) {
       return {
         visitedNodesInOrder,
+        frontierNodesInOrder,
         path: tracePath(trace, startIdx, cur),
         trace,
         isWin: true
@@ -51,6 +53,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
         gScore[next] = humanTime;
         trace[next] = cur;
         queue.push(next);
+        frontierNodesInOrder.push({ idx: next, discoveredAtTick: head - 1 });
       }
     }
   }
@@ -58,6 +61,7 @@ export function bfsSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1)
   // KHÔNG CÓ LỐI THOÁT -> CHẠY ĐI TRỐN
   return {
     visitedNodesInOrder,
+    frontierNodesInOrder,
     path: tracePath(trace, startIdx, bestSurvivalNode),
     trace,
     isWin: false

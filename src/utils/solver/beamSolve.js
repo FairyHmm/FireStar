@@ -22,6 +22,7 @@ export function beamSolve(
   const trace = new Int32Array(size).fill(-1);
   const closed = new Uint8Array(size);
   const visitedNodesInOrder = [];
+  const frontierNodesInOrder = [];
 
   // Beam Width: Độ rộng của chùm (Mở rộng bao nhiêu node hứa hẹn nhất ở mỗi cấp độ)
   const BEAM_WIDTH = 15;
@@ -57,6 +58,7 @@ export function beamSolve(
     if (isAtBoundary(r, c, rows, cols)) {
       return {
         visitedNodesInOrder,
+        frontierNodesInOrder,
         path: tracePath(trace, startIdx, cur),
         trace,
         isWin: true,
@@ -64,6 +66,8 @@ export function beamSolve(
     }
 
     let neighborsAdded = false;
+    // Calculate the current active tick index based on our historical records array
+    const currentTickIndex = visitedNodesInOrder.length - 1;
 
     for (let i = 0; i < 4; i++) {
       const nr = r + DR[i],
@@ -86,6 +90,13 @@ export function beamSolve(
         const fScoreTieBreaked = f * tieBreaker + h;
 
         pq.push(next, fScoreTieBreaked);
+
+        // --- FIXED: Push the newly staged node onto the frontier collection ---
+        frontierNodesInOrder.push({
+          idx: next,
+          discoveredAtTick: currentTickIndex,
+        });
+
         neighborsAdded = true;
       }
     }
@@ -104,6 +115,19 @@ export function beamSolve(
       for (let j = 0; j < survivors.length; j++) {
         pq.push(survivors[j].idx, survivors[j].fScore);
       }
+
+      // Fast lookup dictionary for valid survivor node keys
+      const survivorSet = new Set(survivors.map(s => s.idx));
+
+      // --- FIXED: Loop backwards to safely remove pruned items from the timeline ---
+      for (let k = frontierNodesInOrder.length - 1; k >= 0; k--) {
+        const item = frontierNodesInOrder[k];
+
+        // If it was added during this current tick but dropped by the beam width limit, splice it out
+        if (item.discoveredAtTick === currentTickIndex && !survivorSet.has(item.idx)) {
+          frontierNodesInOrder.splice(k, 1);
+        }
+      }
     }
   }
 
@@ -114,6 +138,7 @@ export function beamSolve(
 
   return {
     visitedNodesInOrder,
+    frontierNodesInOrder,
     path: tracePath(trace, startIdx, bestSurvivalNode),
     trace,
     isWin: false,
