@@ -18,8 +18,8 @@ export function beamSolve(
   fireRate = 1,
 ) {
   const size = rows * cols;
-  const gScore = new Int32Array(size).fill(2e9);
-  const trace = new Int32Array(size).fill(-1);
+  const gScore = new Int16Array(size).fill(0x7fff);
+  const trace = new Int16Array(size).fill(-1);
   const closed = new Uint8Array(size);
   const visitedNodesInOrder = [];
   const frontierNodesInOrder = [];

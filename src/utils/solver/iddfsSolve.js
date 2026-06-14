@@ -16,30 +16,30 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
   let limit = 0;
 
   // Search state trackers (flat arrays to guarantee zero-allocation hot paths)
-  const trace = new Int32Array(size).fill(-1);
-  const gScore = new Int32Array(size).fill(2e9);
-  const stIdx = new Int32Array(size * 2);
-  const stDist = new Int32Array(size * 2);
+  const trace = new Int16Array(size).fill(-1);
+  const gScore = new Int16Array(size).fill(0x7fff);
+  const stIdx = new Int16Array(size * 2);
+  const stDist = new Int16Array(size * 2);
 
   // Dirty-tracking buffer to clean up altered nodes without clearing the whole grid
-  const modified = new Int32Array(size);
+  const modified = new Int16Array(size);
   let modCount = 0;
 
   // Telemetry logs used for final UI visualization mapping
-  const visIdx = new Int32Array(size * 4);
-  const visDist = new Int32Array(size * 4);
+  const visIdx = new Int16Array(size * 4);
+  const visDist = new Int16Array(size * 4);
   let visCount = 0;
 
   // Memory-safe flat frontier logging
-  const frontIdx = new Int32Array(size * 4);
-  const frontTick = new Int32Array(size * 4);
+  const frontIdx = new Int16Array(size * 4);
+  const frontTick = new Int16Array(size * 4);
   let frontCount = 0;
 
   // Outer IDDFS iterative deepening loop
   while (limit <= size) {
     // Fast selective state reset based on nodes touched in the previous depth pass
     for (let i = 0; i < modCount; i++) {
-      gScore[modified[i]] = 2e9;
+      gScore[modified[i]] = 0x7fff;
       trace[modified[i]] = -1;
     }
     modCount = 0;
@@ -112,7 +112,7 @@ export function iddfsSolve(grid, rows, cols, start, fireDist, fireRate = 1) {
         if (
           nextDist < gScore[next] &&
           isSafeFromFire(nextDist, fireDist[next], fireRate) &&
-          gScore[next] === 2e9 &&
+          gScore[next] === 0x7fff &&
           modCount < size
         ) {
           modified[modCount++] = next; // Flag node for subsequent clearing

@@ -5,8 +5,8 @@ import { createHeuristic } from "./heuristic.js";
 
 export function aStarSolve(grid, rows, cols, startIdx, fireDistance, fireRate = 1) {
   const size = rows * cols;
-  const gScore = new Int32Array(size).fill(2e9);
-  const trace = new Int32Array(size).fill(-1);
+  const gScore = new Int16Array(size).fill(0x7fff);
+  const trace = new Int16Array(size).fill(-1);
 
   // Closed List để đánh dấu các node đã được pop ra khỏi Heap
   const closed = new Uint8Array(size);

@@ -23,8 +23,8 @@ export const calculateGridAtTick = (plan, tick, w, h) => {
     simTime = 0;
 
     // Track the last timeline tick index where a node was either explored or queued
-    const lastExploredTick = new Int32Array(w * h).fill(-1);
-    const lastFrontierTick = new Int32Array(w * h).fill(-1);
+    const lastExploredTick = new Int16Array(w * h).fill(-1);
+    const lastFrontierTick = new Int16Array(w * h).fill(-1);
     const activeNodeIdx = visitedNodesInOrder[tick].idx;
 
     // 1. Record all historical explorations up to the current tick frame

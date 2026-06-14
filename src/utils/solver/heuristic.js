@@ -7,41 +7,45 @@ import { CELL } from "../constants.js";
 // ngắn nhất từ ô đó đến lối ra gần nhất
 
 export function createHeuristic(grid, rows, cols) {
-  const exits = [];
-  
+  // Tách ra 2 mảng lưu trực tiếp tọa độ R và C để loại bỏ hoàn toàn Math.floor và % trong vòng lặp getH
+  const exitR = new Uint8Array(rows * cols);
+  const exitC = new Uint8Array(rows * cols);
+  let exitCount = 0;
+
+  const addExit = (idx) => {
+    exitR[exitCount] = Math.floor(idx / cols);
+    exitC[exitCount] = idx % cols;
+    exitCount++;
+  };
+
   // 1. Quét hàng trên cùng và dưới cùng
   for (let c = 0; c < cols; c++) {
-    if (!(grid[c] & CELL.WALL)) exits.push(c); 
+    if (!(grid[c] & CELL.WALL)) addExit(c);
     const bottomIdx = (rows - 1) * cols + c;
-    if (!(grid[bottomIdx] & CELL.WALL)) exits.push(bottomIdx);
+    if (!(grid[bottomIdx] & CELL.WALL)) addExit(bottomIdx);
   }
-  
+
   // 2. Quét cột trái và cột phải (bỏ qua 4 góc)
   for (let r = 1; r < rows - 1; r++) {
     const leftIdx = r * cols;
-    if (!(grid[leftIdx] & CELL.WALL)) exits.push(leftIdx); 
+    if (!(grid[leftIdx] & CELL.WALL)) addExit(leftIdx);
     const rightIdx = r * cols + cols - 1;
-    if (!(grid[rightIdx] & CELL.WALL)) exits.push(rightIdx);
+    if (!(grid[rightIdx] & CELL.WALL)) addExit(rightIdx);
   }
 
   // 3. Trả về hàm getH để thuật toán A* sử dụng
   return function getH(idx) {
-    if (exits.length === 0) return 0;
+    if (exitCount === 0) return 0;
 
     const r1 = Math.floor(idx / cols);
     const c1 = idx % cols;
-    let minD = 2e9;
+    let minD = 0xffff;
 
-    for (let i = 0; i < exits.length; i++) {
-      const exitIdx = exits[i];
-      const r2 = Math.floor(exitIdx / cols);
-      const c2 = exitIdx % cols;
-      
+    for (let i = 0; i < exitCount; i++) {
       // Khoảng cách Manhattan
-      const d = Math.abs(r1 - r2) + Math.abs(c1 - c2); 
-      if (d < minD) minD = d;
+      minD = Math.min(minD, Math.abs(r1 - exitR[i]) + Math.abs(c1 - exitC[i]));
     }
-    
+
     return minD;
   };
 }
